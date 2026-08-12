@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KwikLedgers — Redesign V2 (Home · About · Services · Pricing)</title>
+<style>
+
+
+/* ===================== HOME ===================== */
+
+  /* =========================================================
+     DESIGN TOKENS — extraídos por amostragem de pixel direto
+     dos PNGs oficiais (Formulario_A.png / Home) fornecidos pela Carol.
+     Fonte: mantida Work Sans (confirmado por decisão da Carol,
+     mesmo o mockup Figma usando outra fonte no export).
+     ========================================================= */
+  :root{
+    --ink:#484567;              /* título e corpo — mesma tinta no mockup */
+    --ink-soft:#6B6885;         /* variação mais clara da tinta p/ texto secundário */
+    --blue:#2A5FA5;             /* azul de botão primário (extraído do PNG) */
+    --blue-soft:#5D95C6;        /* stop claro do gradiente do painel de formulário */
+    --blue-deep:#345BA6;        /* stop escuro do gradiente do painel de formulário */
+    --green-check:#38AC6F;      /* checkmark do Hero */
+    --section-bg:#EDEFF2;       /* fundo das seções neutras */
+    --page-blue:#DCE5F2;        /* topo do gradiente geral da página */
+    --page-pink:#EFE2E2;        /* base do gradiente geral da página (footer) */
+    --white:#FFFFFF;
+    --border:#E4E7EF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Work Sans', Helvetica, Arial, sans-serif;
+    color:var(--ink);
+    background:#F2F4F8;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px;}
+  .avatar-placeholder{
+    width:48px;height:48px;border-radius:50%;background:#D9DEEA;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    font-size:11px;color:#8B8FA3;text-align:center;line-height:1.2;
+  }
+  .testi-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+
+  /* ===== HEADER ===== */
+  .top-band{
+    background:linear-gradient(180deg, #DCE5F2 0%, #D3DFEF 22%, #E4EBF4 55%, #F2F4F8 85%, #F2F4F8 100%);
+  }
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 32px;
+    max-width:1200px;margin:0 auto;
+  }
+  header .logo{height:37px;}
+  nav{display:flex;align-items:center;gap:34px;}
+  nav a{font-size:15px;font-weight:400;color:var(--ink);}
+  nav a.active{color:var(--blue);font-weight:400;}
+  .header-actions{display:flex;align-items:center;gap:14px;}
+  .btn{
+    font-size:14.5px;font-weight:700;padding:11px 24px;border-radius:8px;
+    display:inline-block;border:none;cursor:pointer;
+  }
+  .btn-outline{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
+  .btn-primary{background:var(--blue);color:var(--white);}
+  .btn-orange{background:#FF4E1B;color:var(--white);}
+
+  /* ===== HERO ===== */
+  .hero{padding:56px 0 64px;position:relative;overflow:hidden;}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  h1{
+    font-size:44px;line-height:1.16;font-weight:700;letter-spacing:-.3px;
+    color:var(--ink);margin-bottom:18px;
+  }
+  .hero p.lead{font-size:16px;color:var(--ink);opacity:.85;margin-bottom:24px;max-width:480px;line-height:1.55;}
+  .checks{display:flex;flex-direction:column;gap:12px;margin-bottom:30px;}
+  .check-item{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--ink);}
+  .check-item .check-icon{width:22px;height:22px;flex-shrink:0;}
+  .btn-lg{padding:15px 30px;font-size:15px;border-radius:9px;}
+  .hero-cta-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero-visual{position:relative;}
+  .hero-visual .layer{position:absolute;top:0;left:0;width:100%;}
+  .hero-visual .layer-outline{transform:translate(-3%,-5%) scale(1.04);transform-origin:top left;}
+  .hero-visual .spacer{width:100%;visibility:hidden;}
+  .lang-toggle{
+    font-size:20px;line-height:1;width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;margin-left:6px;
+    border:1.5px solid var(--border);background:var(--white);cursor:pointer;
+    padding:0;
+  }
+  .lang-toggle:hover{border-color:var(--blue);}
+
+  /* ===== TRUST STRIP (logos reais dos clientes) ===== */
+  .trust-strip{padding:36px 0 60px;}
+  .logo-row{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;}
+  .logo-row img{height:84px;width:auto;}
+
+  /* ===== SECTION TITLES ===== */
+  .section-title{font-size:32px;font-weight:700;letter-spacing:-.3px;color:var(--ink);text-align:center;}
+  .section-sub{font-size:16px;color:var(--ink);opacity:.75;text-align:center;max-width:560px;margin:12px auto 0;line-height:1.5;}
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials{padding:0 0 72px;}
+  .testimonials .section-title{margin-bottom:40px;}
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .testi-card{
+    background:var(--white);border-radius:18px;padding:30px;
+    box-shadow:0 10px 30px rgba(72,69,103,.06);
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .quote-icon{
+    width:34px;height:34px;border-radius:50%;border:1.5px solid #D9DCE6;
+    display:flex;align-items:center;justify-content:center;color:#B7BBCB;font-size:16px;font-weight:700;
+  }
+  .testi-card p.quote{font-size:14.5px;line-height:1.6;color:var(--ink);opacity:.85;flex:1;}
+  .testi-divider{border-top:1px solid var(--border);}
+  .testi-person{display:flex;align-items:center;gap:12px;padding-top:16px;}
+  .testi-person .name{font-weight:700;font-size:14.5px;color:var(--ink);}
+  .testi-person .role{font-size:13px;color:var(--ink);opacity:.65;}
+
+  /* ===== CTA + FORM (subiu na hierarquia) ===== */
+  .cta-form{padding:0 0 80px;}
+  .cta-card{
+    background:var(--white);border-radius:24px;overflow:hidden;
+    display:grid;grid-template-columns:1fr 1fr;
+    box-shadow:0 20px 50px rgba(72,69,103,.08);
+  }
+  .cta-copy{padding:56px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
+  .cta-copy .logo-mini{height:28px;width:100px;object-fit:contain;margin-bottom:22px;}
+  .cta-copy h2{font-size:30px;font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:20px;}
+  .cta-copy p{font-size:14.5px;color:var(--ink);opacity:.8;line-height:1.6;margin-bottom:10px;}
+  .form-panel{
+    padding:48px;
+    background:linear-gradient(90deg, var(--blue-soft) 0%, var(--blue-deep) 100%);
+    color:var(--white);display:flex;flex-direction:column;justify-content:center;
+  }
+  .form-panel h3{font-size:24px;font-weight:700;line-height:1.3;margin-bottom:26px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;opacity:.9;}
+  .field input{
+    width:100%;padding:8px 0;background:transparent;border:none;
+    border-bottom:1.5px solid rgba(255,255,255,.55);
+    color:var(--white);font-size:15px;font-family:inherit;
+  }
+  .field input::placeholder{color:rgba(255,255,255,.75);}
+  .field input:focus{outline:none;border-bottom-color:var(--white);}
+  .btn-submit{
+    width:100%;background:var(--white);color:var(--blue-deep);font-weight:700;
+    padding:14px;border-radius:9px;font-size:15px;border:none;cursor:pointer;margin-top:8px;
+  }
+  .consent{display:flex;align-items:flex-start;gap:10px;margin-top:16px;font-size:11.5px;line-height:1.5;opacity:.9;}
+  .consent input{margin-top:2px;}
+
+  /* ===== WHY KWIKLEDGERS ===== */
+  .why{padding:0 0 80px;}
+  .why .section-title{margin-bottom:8px;}
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px;}
+  .why-card{background:var(--white);border-radius:18px;padding:32px;box-shadow:0 10px 30px rgba(72,69,103,.05);}
+  .why-card .icon-wrap{margin-bottom:22px;}
+  .why-card .icon-wrap svg{width:46px;height:46px;}
+  .why-card h3{font-size:20px;font-weight:700;color:var(--ink);margin-bottom:20px;}
+  .why-card ul{list-style:none;display:flex;flex-direction:column;gap:12px;}
+  .why-card li{display:flex;gap:10px;font-size:14.5px;color:var(--ink);line-height:1.4;align-items:flex-start;}
+  .why-card li .check-icon-sm{width:20px;height:19px;flex-shrink:0;margin-top:1px;}
+
+  /* ===== WHAT SETS US APART ===== */
+  .apart{padding:0 0 90px;}
+  .apart .section-title{margin-bottom:44px;}
+  .apart-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;}
+  .apart-card{background:var(--white);border-radius:14px;padding:24px 20px;box-shadow:0 8px 24px rgba(72,69,103,.05);}
+  .apart-card .icon{width:42px;height:42px;margin-bottom:18px;object-fit:contain;}
+  .apart-card h4{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+  .apart-card p{font-size:13px;color:var(--ink);opacity:.7;line-height:1.5;}
+
+  /* ===== FOOTER ===== */
+  footer{padding:40px 0 44px;}
+  .footer-links{display:flex;justify-content:center;gap:40px;margin-bottom:28px;}
+  .footer-links a{font-size:14.5px;color:var(--ink);opacity:.75;}
+  .footer-social{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
+  .footer-social a{color:var(--ink);opacity:.7;}
+  .footer-legal{display:flex;justify-content:center;gap:24px;margin-bottom:14px;}
+  .footer-legal a{font-size:13.5px;color:var(--ink);opacity:.65;}
+  .footer-copy{text-align:center;font-size:13px;color:var(--ink);opacity:.55;}
+
+  @media(max-width:960px){
+    .hero-grid{grid-template-columns:1fr;}
+    .testi-grid{grid-template-columns:1fr;}
+    .why-grid{grid-template-columns:1fr;}
+    .apart-grid{grid-template-columns:repeat(2,1fr);}
+    .cta-card{grid-template-columns:1fr;}
+    nav{display:none;}
+    h1{font-size:32px;}
+  }
+
+
+/* ===================== ABOUT (estilos exclusivos) ===================== */
+
+  /* Design tokens — mesmos da Home (Formulario_A.png), reaproveitados para consistência */
+  :root{
+    --ink:#484567; --ink-soft:#6B6885; --blue:#2A5FA5; --blue-soft:#5D95C6; --blue-deep:#345BA6;
+    --green-check:#38AC6F; --section-bg:#EDEFF2; --page-blue:#DCE5F2; --page-pink:#EFE2E2;
+    --white:#FFFFFF; --border:#E4E7EF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Work Sans', Helvetica, Arial, sans-serif;color:var(--ink);background:#F2F4F8;-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px;}
+
+  /* HEADER — idêntico à Home */
+  .top-band{background:linear-gradient(180deg, #DCE5F2 0%, #D3DFEF 22%, #E4EBF4 55%, #F2F4F8 85%, #F2F4F8 100%);}
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px 32px;max-width:1200px;margin:0 auto;}
+  header .logo{height:37px;}
+  nav{display:flex;align-items:center;gap:34px;}
+  nav a{font-size:15px;font-weight:400;color:var(--ink);}
+  nav a.active{color:var(--blue);font-weight:400;}
+  .header-actions{display:flex;align-items:center;gap:14px;}
+  .btn{font-size:14.5px;font-weight:700;padding:11px 24px;border-radius:8px;display:inline-block;border:none;cursor:pointer;}
+  .btn-outline{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
+  .btn-primary{background:var(--blue);color:var(--white);}
+  .btn-orange{background:#FF4E1B;color:var(--white);}
+  .lang-toggle{font-size:20px;line-height:1;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;padding:0;}
+  .lang-toggle:hover{border-color:var(--blue);}
+
+  /* HERO */
+  .hero{padding:56px 0 70px;position:relative;overflow:hidden;}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  h1{font-size:40px;line-height:1.18;font-weight:700;letter-spacing:-.3px;color:var(--ink);margin-bottom:18px;}
+  .hero p.lead{font-size:16px;color:var(--ink);opacity:.85;margin-bottom:28px;max-width:480px;line-height:1.55;}
+  .btn-lg{padding:15px 30px;font-size:15px;border-radius:9px;}
+  .hero-cta-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero-visual{position:relative;}
+  .hero-visual .layer{position:absolute;top:0;left:0;width:100%;}
+  .hero-visual .layer-outline{transform:translate(-3%,-5%) scale(1.04);transform-origin:top left;}
+  .hero-visual .spacer{width:100%;visibility:hidden;}
+
+  /* SECTION TITLES — padrão reaproveitado */
+  .section-tag{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);text-align:center;margin-bottom:10px;}
+  .section-title{font-size:32px;font-weight:700;letter-spacing:-.3px;color:var(--ink);text-align:center;}
+  .section-sub{font-size:16px;color:var(--ink);opacity:.75;text-align:center;max-width:680px;margin:12px auto 0;line-height:1.6;}
+
+  /* OUR STORY */
+  .story{padding:20px 0 80px;}
+  .story-card{background:var(--white);border-radius:24px;padding:48px;box-shadow:0 20px 50px rgba(72,69,103,.06);display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;}
+  .story-card p{font-size:15px;line-height:1.7;color:var(--ink);opacity:.85;margin-bottom:16px;}
+  .story-card img{border-radius:16px;}
+
+  /* OUR TEAM / STATS */
+  .team{padding:0 0 80px;}
+  .stats-card{background:var(--white);border-radius:20px;padding:40px;box-shadow:0 20px 50px rgba(72,69,103,.06);display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:44px;}
+  .stat{text-align:center;}
+  .stat img{height:44px;margin:0 auto 14px;}
+  .stat .num{font-size:34px;font-weight:700;color:var(--blue);margin-bottom:6px;}
+  .stat .label{font-size:13.5px;color:var(--ink);opacity:.7;line-height:1.4;}
+
+  /* TECH PARTNERSHIP */
+  .tech{padding:0 0 80px;}
+  .tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;}
+  .tech-copy h2{font-size:30px;font-weight:700;color:var(--ink);margin-bottom:16px;line-height:1.25;}
+  .tech-copy p{font-size:15px;line-height:1.7;color:var(--ink);opacity:.85;}
+  .tech-images{position:relative;}
+  .tech-images img{border-radius:16px;box-shadow:0 20px 40px rgba(72,69,103,.1);}
+  .tech-images .img-back{width:80%;}
+  .tech-images .img-front{width:62%;position:absolute;bottom:-24px;right:-16px;border:6px solid var(--white);}
+
+  /* TEXT-ONLY SECTIONS (Why We Built / Commitment) */
+  .text-section{padding:0 0 80px;}
+  .text-section .inner{max-width:780px;margin:0 auto;text-align:center;}
+  .text-section h2{font-size:28px;font-weight:700;color:var(--ink);margin-bottom:16px;}
+  .text-section p{font-size:15.5px;line-height:1.75;color:var(--ink);opacity:.85;}
+  .text-section.commitment{background:linear-gradient(90deg, var(--blue-soft) 0%, var(--blue-deep) 100%);border-radius:24px;padding:56px 40px;}
+  .wrap .text-section.commitment{margin:0 32px 80px;}
+  .commitment h2, .commitment p{color:var(--white);}
+  .commitment p{opacity:.92;}
+
+  /* MISSION / VISION / VALUES */
+  .mvv{padding:0 0 80px;}
+  .mvv-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:44px;}
+  .mvv-card{background:var(--white);border-radius:18px;padding:32px;box-shadow:0 10px 30px rgba(72,69,103,.05);}
+  .mvv-card h3{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;color:var(--ink);margin-bottom:14px;}
+  .mvv-card h3 img{height:24px;}
+  .mvv-card p{font-size:14.5px;line-height:1.6;color:var(--ink);opacity:.8;}
+  .values-list{display:flex;flex-direction:column;gap:14px;}
+  .values-list p{font-size:14.5px;line-height:1.6;color:var(--ink);opacity:.85;}
+  .values-list b{color:var(--ink);opacity:1;}
+
+  /* CTA + FORM */
+  .cta-form{padding:0 0 80px;}
+  .cta-card{background:var(--white);border-radius:24px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 20px 50px rgba(72,69,103,.08);}
+  .cta-copy{padding:56px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
+  .cta-copy .cta-image{width:100%;border-radius:16px;margin-bottom:22px;}
+  .cta-copy h2{font-size:26px;font-weight:700;line-height:1.3;color:var(--ink);margin-bottom:14px;}
+  .cta-copy p{font-size:14.5px;color:var(--ink);opacity:.8;line-height:1.6;}
+  .form-panel{padding:48px;background:linear-gradient(90deg, var(--blue-soft) 0%, var(--blue-deep) 100%);color:var(--white);display:flex;flex-direction:column;justify-content:center;}
+  .form-panel h3{font-size:24px;font-weight:700;line-height:1.3;margin-bottom:26px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;opacity:.9;}
+  .field input{width:100%;padding:8px 0;background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,.55);color:var(--white);font-size:15px;font-family:inherit;}
+  .field input::placeholder{color:rgba(255,255,255,.75);}
+  .field input:focus{outline:none;border-bottom-color:var(--white);}
+  .btn-submit{width:100%;background:var(--white);color:var(--blue-deep);font-weight:700;padding:14px;border-radius:9px;font-size:15px;border:none;cursor:pointer;margin-top:8px;}
+  .consent{display:flex;align-items:flex-start;gap:10px;margin-top:16px;font-size:11.5px;line-height:1.5;opacity:.9;}
+  .consent input{margin-top:2px;}
+
+  /* FOOTER — idêntico à Home */
+  footer{padding:40px 0 44px;}
+  .footer-links{display:flex;justify-content:center;gap:40px;margin-bottom:28px;}
+  .footer-links a{font-size:14.5px;color:var(--ink);opacity:.75;}
+  .footer-social{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
+  .footer-social a{color:var(--ink);opacity:.7;}
+  .footer-legal{display:flex;justify-content:center;gap:24px;margin-bottom:14px;}
+  .footer-legal a{font-size:13.5px;color:var(--ink);opacity:.65;}
+  .footer-copy{text-align:center;font-size:13px;color:var(--ink);opacity:.55;}
+
+  @media(max-width:960px){
+    .hero-grid, .story-card, .tech-grid, .mvv-grid, .cta-card{grid-template-columns:1fr;}
+    .stats-card{grid-template-columns:repeat(2,1fr);}
+    nav{display:none;}
+    h1{font-size:30px;}
+    .tech-images .img-front{position:static;width:100%;margin-top:16px;}
+  }
+
+
+/* ===================== SERVICES (estilos exclusivos) ===================== */
+
+  :root{
+    --ink:#484567; --ink-soft:#6B6885; --blue:#2A5FA5; --blue-soft:#5D95C6; --blue-deep:#345BA6;
+    --green-check:#38AC6F; --section-bg:#EDEFF2; --page-blue:#DCE5F2; --page-pink:#EFE2E2;
+    --white:#FFFFFF; --border:#E4E7EF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Work Sans', Helvetica, Arial, sans-serif;color:var(--ink);background:#F2F4F8;-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px;}
+
+  /* HEADER */
+  .top-band{background:linear-gradient(180deg, #DCE5F2 0%, #D3DFEF 22%, #E4EBF4 55%, #F2F4F8 85%, #F2F4F8 100%);}
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px 32px;max-width:1200px;margin:0 auto;}
+  header .logo{height:37px;}
+  nav{display:flex;align-items:center;gap:34px;}
+  nav a{font-size:15px;font-weight:400;color:var(--ink);}
+  nav a.active{color:var(--blue);font-weight:400;}
+  .header-actions{display:flex;align-items:center;gap:14px;}
+  .btn{font-size:14.5px;font-weight:700;padding:11px 24px;border-radius:8px;display:inline-block;border:none;cursor:pointer;}
+  .btn-outline{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
+  .btn-primary{background:var(--blue);color:var(--white);}
+  .btn-orange{background:#FF4E1B;color:var(--white);}
+  .lang-toggle{font-size:20px;line-height:1;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;padding:0;}
+  .lang-toggle:hover{border-color:var(--blue);}
+
+  /* HERO */
+  .hero{padding:56px 0 70px;position:relative;overflow:hidden;}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+  h1{font-size:40px;line-height:1.18;font-weight:700;letter-spacing:-.3px;color:var(--ink);margin-bottom:18px;}
+  .hero p.lead{font-size:16px;color:var(--ink);opacity:.85;margin-bottom:28px;max-width:500px;line-height:1.7;}
+  .hero p.lead b{opacity:1;font-weight:700;}
+  .btn-lg{padding:15px 30px;font-size:15px;border-radius:9px;}
+  .hero-cta-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .hero-visual{position:relative;}
+  .hero-visual .layer{position:absolute;top:0;left:0;width:100%;}
+  .hero-visual .layer-outline{transform:translate(-3%,-5%) scale(1.04);transform-origin:top left;}
+  .hero-visual .spacer{width:100%;visibility:hidden;}
+
+  /* SECTION TITLES */
+  .section-tag{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);text-align:center;margin-bottom:10px;}
+  .section-title{font-size:32px;font-weight:700;letter-spacing:-.3px;color:var(--ink);text-align:center;}
+  .section-sub{font-size:16px;color:var(--ink);opacity:.75;text-align:center;max-width:680px;margin:12px auto 0;line-height:1.6;}
+
+  /* CORE SERVICES */
+  .core{padding:0 0 80px;}
+  .core-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:44px;}
+  .core-card{background:var(--white);border-radius:18px;padding:36px 32px;box-shadow:0 10px 30px rgba(72,69,103,.06);}
+  .core-card img{height:52px;margin-bottom:22px;}
+  .core-card h3{font-size:19px;font-weight:700;color:var(--ink);margin-bottom:14px;}
+  .core-card p{font-size:14.5px;line-height:1.65;color:var(--ink);opacity:.8;}
+
+  /* TAX DEADLINES TIMELINE */
+  .deadlines{padding:0 0 80px;}
+  .timeline{margin-top:48px;position:relative;}
+  .timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--border);transform:translateX(-50%);}
+  .tl-item{display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:0;margin-bottom:6px;}
+  .tl-date{background:var(--blue);color:var(--white);font-weight:700;font-size:13.5px;padding:8px 18px;border-radius:20px;display:inline-block;}
+  .tl-item:nth-child(odd) .tl-date-wrap{text-align:right;}
+  .tl-item:nth-child(even) .tl-date-wrap{text-align:left;grid-column:3;grid-row:1;}
+  .tl-dot{width:14px;height:14px;border-radius:50%;background:var(--blue);border:3px solid var(--white);box-shadow:0 0 0 2px var(--blue);margin:0 auto;position:relative;z-index:1;}
+  .tl-content{background:var(--white);border-radius:14px;padding:20px 24px;box-shadow:0 8px 20px rgba(72,69,103,.05);}
+  .tl-item:nth-child(odd) .tl-content-wrap{grid-column:3;}
+  .tl-item:nth-child(even) .tl-content-wrap{grid-column:1;grid-row:1;}
+  .tl-content h4{font-size:15.5px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .tl-content p{font-size:13.5px;color:var(--ink);opacity:.75;line-height:1.5;}
+  .tl-note{text-align:center;font-size:13px;color:var(--ink);opacity:.6;margin-top:24px;font-style:italic;}
+
+  /* WHY CHOOSE */
+  .whychoose{padding:0 0 80px;}
+  .wc-intro{max-width:700px;margin:20px auto 44px;text-align:center;font-size:15.5px;line-height:1.7;color:var(--ink);opacity:.85;}
+  .wc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .wc-card{background:var(--white);border-radius:16px;padding:28px;box-shadow:0 8px 24px rgba(72,69,103,.05);}
+  .wc-card img{height:40px;margin-bottom:16px;}
+  .wc-card h4{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+  .wc-card p{font-size:13.5px;color:var(--ink);opacity:.75;line-height:1.5;}
+
+  /* CTA + FORM */
+  .cta-form{padding:0 0 80px;}
+  .cta-card{background:var(--white);border-radius:24px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 20px 50px rgba(72,69,103,.08);}
+  .cta-copy{padding:56px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
+  .cta-copy .logo-mini{height:28px;width:100px;object-fit:contain;margin-bottom:22px;}
+  .cta-copy h2{font-size:30px;font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:20px;}
+  .cta-copy p{font-size:14.5px;color:var(--ink);opacity:.8;line-height:1.6;margin-bottom:10px;}
+  .form-panel{padding:48px;background:linear-gradient(90deg, var(--blue-soft) 0%, var(--blue-deep) 100%);color:var(--white);display:flex;flex-direction:column;justify-content:center;}
+  .form-panel h3{font-size:24px;font-weight:700;line-height:1.3;margin-bottom:26px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;opacity:.9;}
+  .field input{width:100%;padding:8px 0;background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,.55);color:var(--white);font-size:15px;font-family:inherit;}
+  .field input::placeholder{color:rgba(255,255,255,.75);}
+  .field input:focus{outline:none;border-bottom-color:var(--white);}
+  .btn-submit{width:100%;background:var(--white);color:var(--blue-deep);font-weight:700;padding:14px;border-radius:9px;font-size:15px;border:none;cursor:pointer;margin-top:8px;}
+  .consent{display:flex;align-items:flex-start;gap:10px;margin-top:16px;font-size:11.5px;line-height:1.5;opacity:.9;}
+  .consent input{margin-top:2px;}
+
+  /* FOOTER */
+  footer{padding:40px 0 44px;}
+  .footer-links{display:flex;justify-content:center;gap:40px;margin-bottom:28px;}
+  .footer-links a{font-size:14.5px;color:var(--ink);opacity:.75;}
+  .footer-social{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
+  .footer-social a{color:var(--ink);opacity:.7;}
+  .footer-legal{display:flex;justify-content:center;gap:24px;margin-bottom:14px;}
+  .footer-legal a{font-size:13.5px;color:var(--ink);opacity:.65;}
+  .footer-copy{text-align:center;font-size:13px;color:var(--ink);opacity:.55;}
+
+  @media(max-width:960px){
+    .hero-grid, .cta-card{grid-template-columns:1fr;}
+    .core-grid, .wc-grid{grid-template-columns:1fr;}
+    nav{display:none;}
+    h1{font-size:30px;}
+    .timeline::before{left:20px;}
+    .tl-item{grid-template-columns:40px 1fr;}
+    .tl-date-wrap, .tl-item:nth-child(even) .tl-date-wrap{grid-column:2;grid-row:1;text-align:left;margin-bottom:8px;}
+    .tl-content-wrap, .tl-item:nth-child(even) .tl-content-wrap{grid-column:2;grid-row:2;}
+    .tl-dot{grid-row:1 / span 2;}
+  }
+
+
+/* ===================== PRICING (estilos exclusivos) ===================== */
+
+  :root{
+    --ink:#484567; --ink-soft:#6B6885; --blue:#2A5FA5; --blue-soft:#5D95C6; --blue-deep:#345BA6;
+    --green-check:#38AC6F; --section-bg:#EDEFF2; --page-blue:#DCE5F2; --page-pink:#EFE2E2;
+    --white:#FFFFFF; --border:#E4E7EF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Work Sans', Helvetica, Arial, sans-serif;color:var(--ink);background:#F2F4F8;-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px;}
+
+  /* HEADER */
+  .top-band{background:linear-gradient(180deg, #DCE5F2 0%, #D3DFEF 22%, #E4EBF4 55%, #F2F4F8 85%, #F2F4F8 100%);padding-bottom:56px;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px 32px;max-width:1200px;margin:0 auto;}
+  header .logo{height:37px;}
+  nav{display:flex;align-items:center;gap:34px;}
+  nav a{font-size:15px;font-weight:400;color:var(--ink);}
+  nav a.active{color:var(--blue);font-weight:400;}
+  .header-actions{display:flex;align-items:center;gap:14px;}
+  .btn{font-size:14.5px;font-weight:700;padding:11px 24px;border-radius:8px;display:inline-block;border:none;cursor:pointer;}
+  .btn-outline{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
+  .btn-primary{background:var(--blue);color:var(--white);}
+  .btn-orange{background:#FF4E1B;color:var(--white);}
+  .lang-toggle{font-size:20px;line-height:1;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;padding:0;}
+  .lang-toggle:hover{border-color:var(--blue);}
+
+  /* PAGE HEADLINE */
+  .page-head{text-align:center;padding:40px 0 0;}
+  .page-head h1{font-size:40px;font-weight:700;color:var(--ink);letter-spacing:-.3px;margin-bottom:14px;}
+  .page-head p{font-size:16px;color:var(--ink);opacity:.75;max-width:600px;margin:0 auto;line-height:1.6;}
+
+  /* PRICING GRID */
+  .pricing{padding:48px 0 90px;}
+  .price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;align-items:stretch;}
+  .price-card{
+    background:var(--white);border-radius:20px;padding:32px 26px;box-shadow:0 14px 34px rgba(72,69,103,.07);
+    display:flex;flex-direction:column;
+  }
+  .price-card.featured{border:2px solid var(--blue);box-shadow:0 20px 44px rgba(42,95,165,.16);position:relative;}
+  .featured-badge{
+    position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+    background:var(--blue);color:var(--white);font-size:11.5px;font-weight:700;
+    padding:5px 14px;border-radius:20px;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;
+  }
+  .price-card h3{font-size:19px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .price-card .subtitle{font-size:12.5px;color:var(--ink);opacity:.6;margin-bottom:18px;}
+  .price-card .amount{font-size:34px;font-weight:700;color:var(--blue);}
+  .price-card .amount sup{font-size:16px;font-weight:700;top:-14px;}
+  .price-card .period{font-size:13px;color:var(--ink);opacity:.6;margin-bottom:20px;}
+  .price-card .btn-choose{
+    display:block;text-align:center;background:var(--blue);color:var(--white);font-weight:700;
+    padding:12px;border-radius:9px;font-size:14px;margin-bottom:24px;
+  }
+  .price-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1;margin-bottom:16px;}
+  .price-card li{display:flex;gap:8px;font-size:13.2px;line-height:1.45;color:var(--ink);opacity:.85;}
+  .price-card li svg{flex-shrink:0;margin-top:2px;}
+  .price-card .best-for{font-size:12.5px;line-height:1.5;color:var(--ink);opacity:.75;border-top:1px solid var(--border);padding-top:14px;}
+  .price-card .best-for b{opacity:1;color:var(--ink);}
+
+  /* CTA + FORM */
+  .cta-form{padding:0 0 80px;}
+  .cta-card{background:var(--white);border-radius:24px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 20px 50px rgba(72,69,103,.08);}
+  .cta-copy{padding:56px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
+  .cta-copy .logo-mini{height:28px;width:100px;object-fit:contain;margin-bottom:22px;}
+  .cta-copy h2{font-size:30px;font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:20px;}
+  .cta-copy p{font-size:14.5px;color:var(--ink);opacity:.8;line-height:1.6;margin-bottom:10px;}
+  .form-panel{padding:48px;background:linear-gradient(90deg, var(--blue-soft) 0%, var(--blue-deep) 100%);color:var(--white);display:flex;flex-direction:column;justify-content:center;}
+  .form-panel h3{font-size:24px;font-weight:700;line-height:1.3;margin-bottom:26px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;opacity:.9;}
+  .field input{width:100%;padding:8px 0;background:transparent;border:none;border-bottom:1.5px solid rgba(255,255,255,.55);color:var(--white);font-size:15px;font-family:inherit;}
+  .field input::placeholder{color:rgba(255,255,255,.75);}
+  .field input:focus{outline:none;border-bottom-color:var(--white);}
+  .btn-submit{width:100%;background:var(--white);color:var(--blue-deep);font-weight:700;padding:14px;border-radius:9px;font-size:15px;border:none;cursor:pointer;margin-top:8px;}
+  .consent{display:flex;align-items:flex-start;gap:10px;margin-top:16px;font-size:11.5px;line-height:1.5;opacity:.9;}
+  .consent input{margin-top:2px;}
+
+  /* FOOTER */
+  footer{padding:40px 0 44px;}
+  .footer-links{display:flex;justify-content:center;gap:40px;margin-bottom:28px;}
+  .footer-links a{font-size:14.5px;color:var(--ink);opacity:.75;}
+  .footer-social{display:flex;justify-content:center;gap:16px;margin-bottom:20px;}
+  .footer-social a{color:var(--ink);opacity:.7;}
+  .footer-legal{display:flex;justify-content:center;gap:24px;margin-bottom:14px;}
+  .footer-legal a{font-size:13.5px;color:var(--ink);opacity:.65;}
+  .footer-copy{text-align:center;font-size:13px;color:var(--ink);opacity:.55;}
+
+  @media(max-width:1100px){
+    .price-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media(max-width:960px){
+    .cta-card{grid-template-columns:1fr;}
+    nav{display:none;}
+    .page-head h1{font-size:30px;}
+  }
+  @media(max-width:640px){
+    .price-grid{grid-template-columns:1fr;}
+  }
+
+
+/* ===================== MOBILE NAV — hambúrguer + dropdown ===================== */
+.mobile-menu-btn{
+  display:none;background:none;border:1.5px solid var(--border);border-radius:8px;
+  width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;
+  flex-shrink:0;
+}
+.mobile-menu-btn svg{display:block;}
+.mobile-dropdown{
+  display:none;
+  flex-direction:column;
+  background:var(--white);
+  border-top:1px solid var(--border);
+  padding:8px 32px 20px;
+}
+.mobile-dropdown.open{display:flex;}
+.mobile-dropdown a.nav-link{
+  padding:14px 0;font-size:16px;font-weight:500;color:var(--ink);
+  border-bottom:1px solid var(--border);
+}
+.mobile-dropdown a.nav-link.active{color:var(--blue);font-weight:700;}
+.mobile-dropdown .mobile-actions{display:flex;gap:10px;margin-top:16px;}
+.mobile-dropdown .mobile-actions .btn{flex:1;text-align:center;}
+
+@media(max-width:960px){
+  nav{display:none;}
+  .header-actions .btn-outline,
+  .header-actions .btn-primary{display:none;}
+  .mobile-menu-btn{display:flex;}
+  header{padding:16px 20px;}
+  .wrap{padding:0 20px;}
+}
+@media(min-width:961px){
+  .mobile-dropdown{display:none !important;}
+}
+
+/* ===================== TRUST STRIP — logos menores no mobile (evita espaçamento gigante) ===================== */
+@media(max-width:960px){
+  .logo-row{gap:26px 32px;}
+  .logo-row img{height:34px;}
+  .trust-strip{padding:24px 0 40px;}
+}
+
+/* ===================== FIX FINAL — força colapso de todos os grids no mobile ===================== */
+@media(max-width:960px){
+  .hero-grid, .story-card, .tech-grid, .mvv-grid, .cta-card,
+  .testi-grid, .why-grid, .apart-grid,
+  .core-grid, .wc-grid{
+    grid-template-columns: 1fr !important;
+  }
+  .stats-card{grid-template-columns: repeat(2,1fr) !important;}
+  .mvv-card{grid-column: auto !important;}
+}
+
+/* ===================== SPA — troca de views sem sair da página ===================== */
+.page-view{display:none;}
+.page-view.active-view{display:block;}
+
+</style>
+</head>
+<body>
+
+<div class="page-view active-view" id="view-home">
+<!-- ============ HEADER ============ -->
+<div class="top-band">
+<header>
+  <img class="logo" src="https://kwikledgers.com/wp-content/uploads/2025/10/KwikLedgers-new-black.png" alt="KwikLedgers">
+  <nav>
+    <a href="#" data-view="home" class="nav-link active" data-i18n="nav_home">Home</a>
+    <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+    <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+    <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+  </nav>
+  <div class="header-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-home" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+    <!-- Seletor de idioma: alterna EUA → Brasil → Espanha → EUA a cada clique -->
+    <button type="button" class="lang-toggle" id="langToggle-home" title="Change language" aria-label="Change language">🇺🇸</button>
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn-home" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="#484567" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  </div>
+</header>
+
+<!-- Dropdown mobile -->
+<div class="mobile-dropdown" id="mobileDropdown-home">
+  <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+  <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+  <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+  <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+  <div class="mobile-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-home" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1 data-i18n="hero_h1">Your Business Growth Starts with Smarter Accounting</h1>
+      <p class="lead" data-i18n="hero_lead">We provide trustworthy, accounting with expert human support. Stop worrying about complex finances and focus on what you do best: scaling your business.</p>
+      <div class="checks">
+        <div class="check-item"><img class="check-icon" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/check-fill.png?resize=24%2C24&ssl=1" alt=""> <span data-i18n="hero_check1">Trusted by businesses across industries</span></div>
+        <div class="check-item"><img class="check-icon" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/check-fill.png?resize=24%2C24&ssl=1" alt=""> <span data-i18n="hero_check2">100% digital, secure, and fully supported</span></div>
+        <div class="check-item"><img class="check-icon" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/check-fill.png?resize=24%2C24&ssl=1" alt=""> <span data-i18n="hero_check3">AI-powered + Expert-reviewed</span></div>
+      </div>
+      <div class="hero-cta-row">
+        <a href="#lead-form-home" class="btn btn-primary btn-lg" data-i18n="hero_btn_start">Start Now</a>
+        <a href="https://portal.kwikledgers.com/sign-up" target="_blank" rel="noopener" class="btn btn-orange btn-lg" data-i18n="hero_btn_seehow">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- Camada 1: foto da cliente recortada na forma do símbolo -->
+      <img class="spacer" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-de-mascara-2.png?fit=652%2C398&ssl=1" alt="">
+      <img class="layer" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-de-mascara-2.png?fit=652%2C398&ssl=1" alt="">
+      <!-- Camada 2: contorno laranja do símbolo, sobreposto com leve deslocamento (efeito de profundidade) -->
+      <img class="layer layer-outline" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-44.png?fit=654%2C399&ssl=1" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST STRIP — logos reais dos clientes (substituindo placeholders Logoipsum do Figma) ============ -->
+<section class="trust-strip">
+  <div class="wrap">
+    <div class="logo-row">
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2026/02/Logo-Tecnologia-Tech-Route.png?fit=527%2C327&ssl=1" alt="Tech Route">
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2026/02/Logo-Fluxx-.png?fit=847%2C677&ssl=1" alt="Fluxx Finance">
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2026/02/Logo-Global-Interway.png?fit=847%2C847&ssl=1" alt="Interway Corp">
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2026/02/Logo-Logistica-Stratum-.png?fit=847%2C847&ssl=1" alt="Stratum">
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/supreme-logo.png?fit=180%2C180&ssl=1" alt="Supreme Public Adjusting">
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/GBN-LOGO.png?fit=200%2C200&ssl=1" alt="GBN Global Business Network">
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Sem-nome-500-x-500-px-2.png?fit=500%2C500&ssl=1" alt="NewLogUS">
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTEMUNHOS — subiu na hierarquia (dentro do fluxo do gradiente) ============ -->
+<section class="testimonials">
+  <div class="wrap">
+    <h2 class="section-title" data-i18n="testi_title">Client Testimonials</h2>
+    <div class="testi-grid" style="margin-top:44px;">
+      <div class="testi-card">
+        <div class="quote-icon">"</div>
+        <p class="quote" data-i18n="testi1_quote">After more than a decade working with KwikLedgers, their AI and human verification system has reduced my costs, improved access to financial data, and optimized tax strategies. They're efficient and cost-saving, and I highly recommend them.</p>
+        <div class="testi-divider"></div>
+        <div class="testi-person">
+          <img class="testi-avatar" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Depth-7-Frame-0.png?fit=60%2C60&ssl=1" alt="John F.">
+          <div>
+            <div class="name">John F.</div>
+            <div class="role" data-i18n="testi1_role">President of Supreme Public Adjusting LLC</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="quote-icon">"</div>
+        <p class="quote" data-i18n="testi2_quote">Before KwikLedgers, poor communication and turnover made things stressful. The onboarding here was simple, and since then, everything has been smooth. They are trustworthy and communicative, and I highly recommend them.</p>
+        <div class="testi-divider"></div>
+        <div class="testi-person">
+          <img class="testi-avatar" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Depth-7-Frame-0-1.png?fit=61%2C61&ssl=1" alt="Andre Q.">
+          <div>
+            <div class="name">Andre Q.</div>
+            <div class="role" data-i18n="testi2_role">President/CEO of U9 Engineering &amp; Technology Corp</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="quote-icon">"</div>
+        <p class="quote" data-i18n="testi3_quote">I had a frustrating experience with my previous accounting firm, but switching to KwikLedgers changed everything. Their professionalism, efficiency, and reliable service keep my company compliant, and I highly recommend them.</p>
+        <div class="testi-divider"></div>
+        <div class="testi-person">
+          <img class="testi-avatar" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Depth-7-Frame-0-2.png?fit=60%2C60&ssl=1" alt="Marcelo S.">
+          <div>
+            <div class="name">Marcelo S.</div>
+            <div class="role" data-i18n="testi3_role">CEO of GBN Global Business Network LLC</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============ CTA + FORMULÁRIO — subiu na hierarquia ============ -->
+<section class="cta-form" id="lead-form-home">
+  <div class="wrap">
+    <div class="cta-card">
+      <div class="cta-copy">
+        <img class="logo-mini" src="https://kwikledgers.com/wp-content/uploads/2025/10/KwikLedgers-new-black.png" alt="KwikLedgers">
+        <h2 data-i18n="cta_h2">Simplified financial management for your business.</h2>
+        <p data-i18n="cta_p1">We help you stay organized, compliant, and prepare your company to grow with confidence.</p>
+        <p data-i18n="cta_p2">Fill out the form and count on our team to guide each step while you focus on what you do best.</p>
+      </div>
+      <div class="form-panel">
+        <h3 data-i18n="form_h3">Get started today, it only takes a minute to fill out the form.</h3>
+        <!-- TODO: destino do submit — endpoint/integração definitiva a confirmar. Placeholder abaixo. -->
+        <form action="#TODO-FORM-ENDPOINT" method="POST">
+          <div class="field">
+            <label data-i18n="form_label_name">Name</label>
+            <input type="text" name="name" placeholder="Full Name" data-i18n-placeholder="form_placeholder_name">
+          </div>
+          <div class="field">
+            <label data-i18n="form_label_email">E-mail*</label>
+            <input type="email" name="email" placeholder="user@email.com" required data-i18n-placeholder="form_placeholder_email">
+          </div>
+          <div class="field">
+            <label data-i18n="form_label_phone">Phone Number</label>
+            <input type="tel" name="phone" placeholder="(ddd) 9-9999-9999" data-i18n-placeholder="form_placeholder_phone">
+          </div>
+          <button type="submit" class="btn-submit" data-i18n="form_submit">Submit</button>
+          <label class="consent">
+            <input type="checkbox" required>
+            <span data-i18n="form_consent">By submitting this form, I agree to receive communications from the company and consent to the processing of my information in line with the Privacy Policy.</span>
+          </label>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY KWIKLEDGERS ============ -->
+<section class="why">
+  <div class="wrap">
+    <h2 class="section-title" data-i18n="why_title">Why KwikLedgers?</h2>
+    <p class="section-sub" data-i18n="why_sub">Everything You Need to Stay Compliant and Grow — Without the Headaches</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="20" r="15" fill="#2A5FA5"/><path d="M18 20.5l4 4 8-8.5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 31l-3 12 8.5-4.5L24 44l3.5-5.5L36 43l-3-12" stroke="#2A5FA5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </div>
+        <h3 data-i18n="why1_title">Trust &amp; Compliance</h3>
+        <ul>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why1_li1">We keep your books clean, so you can sleep easy</span></li>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why1_li2">Stay focused on growth, we'll handle the rules</span></li>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why1_li3">Trusted support that grows with your business.</span></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="18" fill="#2A5FA5"/><text x="24" y="32" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">$</text></svg>
+        </div>
+        <h3 data-i18n="why2_title">Flexibility &amp; Savings</h3>
+        <ul>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why2_li1">Unbeatable Pricing</span></li>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why2_li2">Transparent Pricing, No Surprises</span></li>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why2_li3">Flexible Plans + Exclusive Discounts</span></li>
+        </ul>
+      </div>
+      <div class="why-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 48 48" fill="none"><path d="M8 26v-3c0-8.8 7.2-16 16-16s16 7.2 16 16v3" stroke="#2A5FA5" stroke-width="3.4" stroke-linecap="round"/><rect x="5" y="24" width="9" height="14" rx="4" fill="#2A5FA5"/><rect x="34" y="24" width="9" height="14" rx="4" fill="#2A5FA5"/><path d="M43 36c0 4.5-4 7-9 7h-3" stroke="#2A5FA5" stroke-width="3" stroke-linecap="round"/></svg>
+        </div>
+        <h3 data-i18n="why3_title">Support &amp; Innovation</h3>
+        <ul>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why3_li1">Dedicated Support</span></li>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why3_li2">Multi-Language Support</span></li>
+          <li><img class="check-icon-sm" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector.png?resize=21%2C20&ssl=1" alt=""> <span data-i18n="why3_li3">Innovative Financial &amp; Tax Tech</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT SETS US APART ============ -->
+<section class="apart">
+  <div class="wrap">
+    <h2 class="section-title" data-i18n="apart_title">What Sets Us Apart</h2>
+    <div class="apart-grid">
+      <div class="apart-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none"><path d="M25.2 6.2c.9 0 1.8.4 2.5 1l14 14c1.3 1.3 1.3 3.5 0 4.9L28.9 39c-1.3 1.3-3.5 1.3-4.9 0L10 25c-.6-.6-1-1.5-1-2.5V9.5C9 7.6 10.6 6 12.5 6H23c.9 0 1.6.1 2.2.2z" fill="#2A5FA5"/><circle cx="17.5" cy="15.5" r="3" fill="#fff"/></svg>
+        <h4 data-i18n="apart1_title">Ultra-Affordable Plans</h4>
+        <p data-i18n="apart1_desc">Professional Accounting without the premium price tag</p>
+      </div>
+      <div class="apart-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none"><path d="M24 5l16 6v11c0 10-7 17-16 21-9-4-16-11-16-21V11l16-6z" fill="#2A5FA5"/><path d="M16 24l5.5 5.5L33 18" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h4 data-i18n="apart2_title">100% Digital &amp; Secure</h4>
+        <p data-i18n="apart2_desc">Access your finances anytime, anywhere</p>
+      </div>
+      <div class="apart-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none"><path d="M12 4h24v38l-4-3-4 3-4-3-4 3-4-3-4 3V4z" fill="#2A5FA5"/><path d="M17 15h14M17 21h14M17 27h8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <h4 data-i18n="apart3_title">Transparent Pricing</h4>
+        <p data-i18n="apart3_desc">No hidden fees, ever</p>
+      </div>
+      <div class="apart-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none"><circle cx="20" cy="20" r="13" fill="#2A5FA5"/><path d="M15 20l3.5 3.5L26.5 15" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M29.5 29.5L41 41" stroke="#2A5FA5" stroke-width="5" stroke-linecap="round"/></svg>
+        <h4 data-i18n="apart4_title">Expert Oversight</h4>
+        <p data-i18n="apart4_desc">Trusted experts watching your numbers, always.</p>
+      </div>
+      <div class="apart-card">
+        <svg class="icon" viewBox="0 0 48 48" fill="none"><rect x="6" y="27" width="7" height="15" rx="1.5" fill="#2A5FA5"/><rect x="20.5" y="19" width="7" height="23" rx="1.5" fill="#2A5FA5"/><rect x="35" y="10" width="7" height="32" rx="1.5" fill="#2A5FA5"/><path d="M6 15l10-7 8 5 12-9" stroke="#2A5FA5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/><path d="M31 4l2 4.3 4.7.6-3.5 3.2.9 4.6L31 14.5l-4.1 2.2.9-4.6-3.5-3.2 4.7-.6z" fill="#FF4E1B"/></svg>
+        <h4 data-i18n="apart5_title">Proven Track Record</h4>
+        <p data-i18n="apart5_desc">Success stories written in our clients' books.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="#" data-view="home" class="nav-link" data-i18n="footer_home">Home</a>
+      <a href="#" data-view="about" class="nav-link" data-i18n="footer_about">About</a>
+      <a href="#" data-view="services" class="nav-link" data-i18n="footer_services">Services</a>
+      <a href="#" data-view="pricing" class="nav-link" data-i18n="footer_pricing">Pricing</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/kwikledgers" aria-label="Instagram EUA"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.1"/></svg></a>
+      <a href="https://www.linkedin.com/company/kwikledgers/" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M9 9h4v2c.6-1 1.9-2.2 3.9-2.2 3 0 4.1 2 4.1 5.1V21h-4v-6.5c0-1.3-.5-2.2-1.7-2.2-1 0-1.6.7-1.9 1.3-.1.2-.1.5-.1.8V21H9z"/></svg></a>
+      <a href="https://www.facebook.com/kwikledgers" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.6V3.7C15.9 3.6 15 3.5 13.9 3.5c-2.3 0-3.9 1.4-3.9 4v2.4H7.3V13H10v8z"/></svg></a>
+    </div>
+    <div class="footer-legal">
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_privacy">Privacy Policy</a>
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_terms">Terms of Service</a>
+    </div>
+    <div class="footer-copy" data-i18n="footer_copy">© 2025 Kwik Ledgers. All rights reserved.</div>
+  </div>
+</footer>
+</div>
+
+<div class="page-view" id="view-about">
+<!-- ============ HEADER ============ -->
+<div class="top-band">
+<header>
+  <img class="logo" src="https://kwikledgers.com/wp-content/uploads/2025/10/KwikLedgers-new-black.png" alt="KwikLedgers">
+  <nav>
+    <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+    <a href="#" data-view="about" class="nav-link active" data-i18n="nav_about">About</a>
+    <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+    <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+  </nav>
+  <div class="header-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-about" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+    <button type="button" class="lang-toggle" id="langToggle-about" title="Change language" aria-label="Change language">🇺🇸</button>
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn-about" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="#484567" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  </div>
+</header>
+
+<!-- Dropdown mobile -->
+<div class="mobile-dropdown" id="mobileDropdown-about">
+  <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+  <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+  <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+  <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+  <div class="mobile-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-about" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1 data-i18n="about_h1">Kwikledgers: Smarter Accounting for Growing Businesses.</h1>
+      <p class="lead" data-i18n="about_lead">Meet the people and the purpose behind KwikLedgers. We're dedicated to simplifying your financial world so you can focus on what you do best.</p>
+      <div class="hero-cta-row">
+        <a href="#lead-form-about" class="btn btn-primary btn-lg" data-i18n="hero_btn_start">Start Now</a>
+        <a href="https://portal.kwikledgers.com/sign-up" target="_blank" rel="noopener" class="btn btn-orange btn-lg" data-i18n="hero_btn_seehow">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img class="spacer" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-de-mascara-3.png?fit=652%2C398&ssl=1" alt="">
+      <img class="layer" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-de-mascara-3.png?fit=652%2C398&ssl=1" alt="">
+      <img class="layer layer-outline" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-44.png?fit=654%2C399&ssl=1" alt="">
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============ OUR STORY ============ -->
+<section class="story">
+  <div class="wrap">
+    <div class="section-tag" data-i18n="about_story_tag">Our Story</div>
+    <h2 class="section-title" style="margin-bottom:36px;" data-i18n="about_story_title">From Complex Ledgers to a Simple Idea</h2>
+    <div class="story-card">
+      <div>
+        <p data-i18n="about_story_p1">For over 20 years, our team of certified accountants worked with countless entrepreneurs and small business owners—innovators, creators, and builders—watching them get bogged down by the very thing that should be empowering them: their finances. Traditional accounting was complex, expensive, and disconnected from the fast-paced reality of modern business. We knew there had to be a better way.</p>
+        <p data-i18n="about_story_p2">Driven by the belief that financial clarity is the key to growth, KwikLedgers was born. With two decades of hands-on accounting experience and a team of more than 10 certified professionals, we partnered with a leading technology company to build a platform that combines our deep financial expertise with cutting-edge AI. Our journey began by merging traditional accounting wisdom with innovative automation to create a seamless, all-in-one solution. Today, we're proud to be trusted by over 1,500 businesses who share our vision of simplified, intelligent financial management.</p>
+      </div>
+      <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/laptop-3d-brilhante-com-copo-de-vinho-holografico-flutuante-e-conceito-de-espaco-de-copia-abundante-como-uma-la-brilhante-1.png?resize=709%2C371&ssl=1" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUR TEAM ============ -->
+<section class="team">
+  <div class="wrap">
+    <div class="section-tag" data-i18n="about_team_tag">Our Team</div>
+    <h2 class="section-title" data-i18n="about_team_title">Meet the Experts Behind Your Success</h2>
+    <p class="section-sub" data-i18n="about_team_sub">Our core team brings together over 20 years of combined accounting experience with modern technology expertise. Led by certified public accountants who have worked with businesses across industries—from startups to established enterprises—we understand the unique financial challenges that growing companies face.</p>
+    <div class="stats-card">
+      <div class="stat">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Outline.png?fit=88%2C83&ssl=1" alt="">
+        <div class="num">20+</div>
+        <div class="label" data-i18n="about_stat1_label">Years of combined accounting experience</div>
+      </div>
+      <div class="stat">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector-2.png?fit=42%2C45&ssl=1" alt="">
+        <div class="num">10+</div>
+        <div class="label" data-i18n="about_stat2_label">Certified accounting professionals</div>
+      </div>
+      <div class="stat">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector-1.png?fit=47%2C45&ssl=1" alt="">
+        <div class="num">1500+</div>
+        <div class="label" data-i18n="about_stat3_label">Businesses served</div>
+      </div>
+      <div class="stat">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/ewq.png?fit=52%2C52&ssl=1" alt="">
+        <div class="num">50+</div>
+        <div class="label" data-i18n="about_stat4_label">Industries supported</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TECHNOLOGY PARTNERSHIP ============ -->
+<section class="tech">
+  <div class="wrap tech-grid">
+    <div class="tech-copy">
+      <div class="section-tag" style="text-align:left;" data-i18n="about_tech_tag">Our Technology Partnership</div>
+      <h2 data-i18n="about_tech_title">Where Experience Meets Innovation</h2>
+      <p data-i18n="about_tech_p">Recognizing that the future of accounting lies in the perfect blend of human expertise and artificial intelligence, we partnered with a leading technology company to develop KwikLedgers. This collaboration allows us to offer the precision and insight that only comes from decades of hands-on experience, enhanced by the speed and accuracy of modern AI technology.</p>
+    </div>
+    <div class="tech-images">
+      <img class="img-back" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Retangulo-4223-2.png?fit=826%2C517&ssl=1" alt="">
+      <img class="img-front" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Group-2351.png?fit=662%2C451&ssl=1" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY WE BUILT KWIKLEDGERS ============ -->
+<section class="text-section">
+  <div class="wrap inner">
+    <div class="section-tag" data-i18n="about_why_tag">Why We Built KwikLedgers</div>
+    <h2 data-i18n="about_why_title">Solving Real Problems for Real Businesses</h2>
+    <p data-i18n="about_why_p">After two decades in traditional accounting, we saw the same problems over and over: business owners spending too much time on bookkeeping, paying too much for basic services, and struggling with outdated systems that could not keep up with their growth. We built KwikLedgers to solve these exact problems—combining our deep accounting knowledge with user-friendly technology that actually works for modern businesses.</p>
+  </div>
+</section>
+
+<!-- ============ OUR COMMITMENT TO YOU ============ -->
+<section class="text-section">
+  <div class="wrap">
+    <div class="text-section commitment">
+      <div class="inner">
+        <div class="section-tag" style="color:rgba(255,255,255,.85);" data-i18n="about_commit_tag">Our Commitment to You</div>
+        <h2 data-i18n="about_commit_title">Your Success is Our Legacy</h2>
+        <p data-i18n="about_commit_p">Every feature in KwikLedgers reflects our commitment to your success. From our transparent pricing to our dedicated support team, everything we do is designed to help you focus on what you do best: growing your business. When you succeed, we succeed—and that's been our philosophy for over 20 years.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MISSION, VISION & VALUES ============ -->
+<section class="mvv">
+  <div class="wrap">
+    <h2 class="section-title" data-i18n="about_mvv_title">Our Mission, Vision &amp; Values</h2>
+    <div class="mvv-grid">
+      <div class="mvv-card">
+        <h3><img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/target-shop-bullseye-arrow-target.png?resize=41%2C39&ssl=1" alt=""> <span data-i18n="about_mission_title">Mission</span></h3>
+        <p data-i18n="about_mission_p">To empower businesses with digital, reliable, and affordable accounting tools, freeing them to focus on growth and innovation.</p>
+      </div>
+      <div class="mvv-card">
+        <h3><img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/target-dollar-Streamline-Plump.png?resize=41%2C41&ssl=1" alt=""> <span data-i18n="about_vision_title">Vision</span></h3>
+        <p data-i18n="about_vision_p">To become the leading accounting platform for startups and SMBs in the U.S., celebrated for our technology, transparency, and unwavering customer support.</p>
+      </div>
+      <div class="mvv-card" style="grid-column:span 2;">
+        <h3><img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector-3.png?resize=33%2C33&ssl=1" alt=""> <span data-i18n="about_values_title">Values</span></h3>
+        <div class="values-list">
+          <p data-i18n="about_values_1"><b>Customer-First:</b> Your success is our success. We build our solutions around your needs.</p>
+          <p data-i18n="about_values_2"><b>Radical Transparency:</b> No hidden fees, no surprises. Just clear, honest pricing and communication.</p>
+          <p data-i18n="about_values_3"><b>Innovation in Simplicity:</b> We use powerful technology to make your life simpler, not more complicated.</p>
+          <p data-i18n="about_values_4"><b>Uncompromising Security:</b> We protect your data with the highest standards of security and compliance.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA + FORMULÁRIO ============ -->
+<section class="cta-form" id="lead-form-about">
+  <div class="wrap">
+    <div class="cta-card">
+      <div class="cta-copy">
+        <img class="cta-image" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/jovem-caucasiano-bem-sucedido-estudante-freelancer-usando-laptop-assistindo-webinars-trabalhando-remotamente-e-learning-e-commerce-online-isolado-em-fundo-branco-1.png?fit=729%2C486&ssl=1" alt="">
+        <h2 data-i18n="about_cta_h2">Ready to Join Our Journey?</h2>
+        <p data-i18n="about_cta_p"><b>Solve this now.</b> Talk to our team about your company's accounting challenges. Gain clarity on compliance, cash flow, and tax filings so you can stay focused on growth.</p>
+      </div>
+      <div class="form-panel">
+        <h3 data-i18n="form_h3">Get started today, it only takes a minute to fill out the form.</h3>
+        <!-- TODO: destino do submit — endpoint/integração definitiva a confirmar -->
+        <form action="#TODO-FORM-ENDPOINT" method="POST">
+          <div class="field"><label data-i18n="form_label_name">Name</label><input type="text" name="name" placeholder="Full Name" data-i18n-placeholder="form_placeholder_name"></div>
+          <div class="field"><label data-i18n="form_label_email">E-mail*</label><input type="email" name="email" placeholder="user@email.com" required data-i18n-placeholder="form_placeholder_email"></div>
+          <div class="field"><label data-i18n="form_label_phone">Phone Number</label><input type="tel" name="phone" placeholder="(ddd) 9-9999-9999" data-i18n-placeholder="form_placeholder_phone"></div>
+          <button type="submit" class="btn-submit" data-i18n="form_submit">Submit</button>
+          <label class="consent">
+            <input type="checkbox" required>
+            <span data-i18n="form_consent">By submitting this form, I agree to receive communications from the company and consent to the processing of my information in line with the Privacy Policy.</span>
+          </label>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+      <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+      <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+      <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/kwikledgers" aria-label="Instagram EUA"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.1"/></svg></a>
+      <a href="https://www.linkedin.com/company/kwikledgers/" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M9 9h4v2c.6-1 1.9-2.2 3.9-2.2 3 0 4.1 2 4.1 5.1V21h-4v-6.5c0-1.3-.5-2.2-1.7-2.2-1 0-1.6.7-1.9 1.3-.1.2-.1.5-.1.8V21H9z"/></svg></a>
+      <a href="https://www.facebook.com/kwikledgers" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.6V3.7C15.9 3.6 15 3.5 13.9 3.5c-2.3 0-3.9 1.4-3.9 4v2.4H7.3V13H10v8z"/></svg></a>
+    </div>
+    <div class="footer-legal">
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_privacy">Privacy Policy</a>
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_terms">Terms of Service</a>
+    </div>
+    <div class="footer-copy" data-i18n="footer_copy">© 2025 Kwik Ledgers. All rights reserved.</div>
+  </div>
+</footer>
+</div>
+
+<div class="page-view" id="view-services">
+<!-- ============ HEADER ============ -->
+<div class="top-band">
+<header>
+  <img class="logo" src="https://kwikledgers.com/wp-content/uploads/2025/10/KwikLedgers-new-black.png" alt="KwikLedgers">
+  <nav>
+    <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+    <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+    <a href="#" data-view="services" class="nav-link active" data-i18n="nav_services">Services</a>
+    <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+  </nav>
+  <div class="header-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-services" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+    <button type="button" class="lang-toggle" id="langToggle-services" title="Change language" aria-label="Change language">🇺🇸</button>
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn-services" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="#484567" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  </div>
+</header>
+
+<!-- Dropdown mobile -->
+<div class="mobile-dropdown" id="mobileDropdown-services">
+  <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+  <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+  <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+  <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+  <div class="mobile-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-services" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1 data-i18n="services_h1">Simplify Your Accounting. Empower Your Growth.</h1>
+      <p class="lead" data-i18n="services_lead">At <b>KwikLedgers</b>, we believe <b>accounting should be simple, affordable, and reliable</b>—so you can focus on growing your business. With over <b>15 years in the market</b> and experience with <b>1500+ businesses</b>, we combine <b>smart technology with expert review</b> to ensure <b>quality and peace of mind in every delivery.</b></p>
+      <div class="hero-cta-row">
+        <a href="#lead-form-services" class="btn btn-primary btn-lg" data-i18n="hero_btn_start">Start Now</a>
+        <a href="https://portal.kwikledgers.com/sign-up" target="_blank" rel="noopener" class="btn btn-orange btn-lg" data-i18n="hero_btn_seehow">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img class="spacer" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-de-mascara-2-1.png?fit=652%2C398&ssl=1" alt="">
+      <img class="layer" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-de-mascara-2-1.png?fit=652%2C398&ssl=1" alt="">
+      <img class="layer layer-outline" src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Grupo-44.png?fit=654%2C399&ssl=1" alt="">
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============ OUR CORE SERVICES ============ -->
+<section class="core">
+  <div class="wrap">
+    <h2 class="section-title" data-i18n="services_core_title">Our Core Services</h2>
+    <p class="section-sub" data-i18n="services_core_sub">Whether you're just starting your business or scaling up, KwikLedgers offers a complete financial solution</p>
+    <div class="core-grid">
+      <div class="core-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Outline-1.png?fit=68%2C68&ssl=1" alt="">
+        <h3 data-i18n="services_core1_title">Compliance &amp; Filings</h3>
+        <p data-i18n="services_core1_desc">We handle your bookkeeping and tax filings with accuracy and consistency. From financial records to federal and state compliance, we keep everything up to date, reduce risks, and ensure audit readiness.</p>
+      </div>
+      <div class="core-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector-2-1.png?fit=58%2C58&ssl=1" alt="">
+        <h3 data-i18n="services_core2_title">Financial Consulting &amp; Advisory</h3>
+        <p data-i18n="services_core2_desc">We help you make smarter financial decisions with tailored strategies for growth, compliance, and efficiency. From planning to execution, we ensure your business stays on track and profitable.</p>
+      </div>
+      <div class="core-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Vector-4.png?fit=54%2C53&ssl=1" alt="">
+        <h3 data-i18n="services_core3_title">Insights &amp; Growth</h3>
+        <p data-i18n="services_core3_desc">Turn numbers into strategic decisions. With real-time financial reporting, tax planning, and outsourced accounting, we help you save money, increase efficiency, and scale your business sustainably.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KEY IRS TAX DEADLINES ============ -->
+<section class="deadlines">
+  <div class="wrap">
+    <h2 class="section-title" data-i18n="services_dl_title">Key IRS Tax Deadlines You Should Know</h2>
+    <p class="section-sub" data-i18n="services_dl_sub">Managing your deadlines is critical to avoiding penalties and ensuring compliance. Here are the key dates every business should track:</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date-wrap"><span class="tl-date" data-i18n="services_dl1_date">January</span></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content-wrap"><div class="tl-content"><h4 data-i18n="services_dl1_title">Deadline to submit</h4><p data-i18n="services_dl1_desc">Deadline to submit prior-year documents and issue Form 1099 to contractors.</p></div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date-wrap"><span class="tl-date" data-i18n="services_dl2_date">March 15</span></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content-wrap"><div class="tl-content"><h4 data-i18n="services_dl2_title">LLC &amp; S-Corp Tax Filing Deadline</h4><p data-i18n="services_dl2_desc">Corporate Income Tax filing for LLCs (Form 1065) and S-Corps. Also the last day to request an extension for these entities.</p></div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date-wrap"><span class="tl-date" data-i18n="services_dl3_date">April 15</span></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content-wrap"><div class="tl-content"><h4 data-i18n="services_dl3_title">C-Corp &amp; Personal Tax Filing Deadline</h4><p data-i18n="services_dl3_desc">Filing deadline for C-Corps and personal tax returns. Also the deadline to file extensions.</p></div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date-wrap"><span class="tl-date" data-i18n="services_dl4_date">May 1</span></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content-wrap"><div class="tl-content"><h4 data-i18n="services_dl4_title">Florida Annual Report Due</h4><p data-i18n="services_dl4_desc">All Florida business entities—including LLCs and corporations—must file their Annual Report with the state by this deadline to maintain active status and avoid penalties.</p></div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date-wrap"><span class="tl-date" data-i18n="services_dl5_date">October 15</span></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content-wrap"><div class="tl-content"><h4 data-i18n="services_dl5_title">Final Extended Tax Deadline</h4><p data-i18n="services_dl5_desc">October 15 is the final day to file extended federal tax returns for C-Corporations and individuals. After this date, penalties may apply for late filings.</p></div></div>
+      </div>
+    </div>
+    <p class="tl-note" data-i18n="services_dl_note">*Note: State deadlines may vary. We help ensure you're up to date across all jurisdictions.</p>
+  </div>
+</section>
+
+<!-- ============ WHY CHOOSE KWIKLEDGERS ============ -->
+<section class="whychoose">
+  <div class="wrap">
+    <h2 class="section-title" data-i18n="services_why_title">Why Choose KwikLedgers?</h2>
+    <p class="wc-intro" data-i18n="services_why_intro">KwikLedgers combines intelligent automation with human expertise to give you total control and visibility over your business finances. Here's what sets us apart:</p>
+    <div class="wc-grid">
+      <div class="wc-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/cpu-line.png?fit=40%2C40&ssl=1" alt="">
+        <h4 data-i18n="services_wc1_title">Smart &amp; Verified Accounting</h4>
+        <p data-i18n="services_wc1_desc">AI-powered solutions reviewed by certified accountants</p>
+      </div>
+      <div class="wc-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Group.png?fit=40%2C40&ssl=1" alt="">
+        <h4 data-i18n="services_wc2_title">Secure Access, Anytime</h4>
+        <p data-i18n="services_wc2_desc">100% secure cloud-based access—anytime, anywhere</p>
+      </div>
+      <div class="wc-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/wallet-line.png?fit=40%2C40&ssl=1" alt="">
+        <h4 data-i18n="services_wc3_title">Transparent Full-Service</h4>
+        <p data-i18n="services_wc3_desc">Full-service digital accounting with no hidden fees</p>
+      </div>
+      <div class="wc-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/Group-1.png?fit=40%2C40&ssl=1" alt="">
+        <h4 data-i18n="services_wc4_title">Plans That Fit Your Budget</h4>
+        <p data-i18n="services_wc4_desc">Flexible plans, starting at just $1/month</p>
+      </div>
+      <div class="wc-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/messages-people-person-bubble-square-1-Streamline-Ultimate.png?fit=35%2C35&ssl=1" alt="">
+        <h4 data-i18n="services_wc5_title">Support Across States &amp; Industries</h4>
+        <p data-i18n="services_wc5_desc">Compliance and scalability for multiple jurisdictions and sectors.</p>
+      </div>
+      <div class="wc-card">
+        <img src="https://i0.wp.com/kwikledgers.com/wp-content/uploads/2025/10/earth-line.png?fit=40%2C40&ssl=1" alt="">
+        <h4 data-i18n="services_wc6_title">Dedicated Expert Support</h4>
+        <p data-i18n="services_wc6_desc">Direct access to certified accountants and advisors to guide your U.S. business journey.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA + FORMULÁRIO ============ -->
+<section class="cta-form" id="lead-form-services">
+  <div class="wrap">
+    <div class="cta-card">
+      <div class="cta-copy">
+        <img class="logo-mini" src="https://kwikledgers.com/wp-content/uploads/2025/10/KwikLedgers-new-black.png" alt="KwikLedgers">
+        <h2 data-i18n="cta_h2">Simplified financial management for your business.</h2>
+        <p data-i18n="cta_p1">We help you stay organized, compliant, and prepare your company to grow with confidence.</p>
+        <p data-i18n="cta_p2">Fill out the form and count on our team to guide each step while you focus on what you do best.</p>
+      </div>
+      <div class="form-panel">
+        <h3 data-i18n="form_h3">Get started today, it only takes a minute to fill out the form.</h3>
+        <!-- TODO: destino do submit — endpoint/integração definitiva a confirmar -->
+        <form action="#TODO-FORM-ENDPOINT" method="POST">
+          <div class="field"><label data-i18n="form_label_name">Name</label><input type="text" name="name" placeholder="Full Name" data-i18n-placeholder="form_placeholder_name"></div>
+          <div class="field"><label data-i18n="form_label_email">E-mail*</label><input type="email" name="email" placeholder="user@email.com" required data-i18n-placeholder="form_placeholder_email"></div>
+          <div class="field"><label data-i18n="form_label_phone">Phone Number</label><input type="tel" name="phone" placeholder="(ddd) 9-9999-9999" data-i18n-placeholder="form_placeholder_phone"></div>
+          <button type="submit" class="btn-submit" data-i18n="form_submit">Submit</button>
+          <label class="consent">
+            <input type="checkbox" required>
+            <span data-i18n="form_consent">By submitting this form, I agree to receive communications from the company and consent to the processing of my information in line with the Privacy Policy.</span>
+          </label>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+      <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+      <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+      <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/kwikledgers" aria-label="Instagram EUA"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.1"/></svg></a>
+      <a href="https://www.linkedin.com/company/kwikledgers/" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M9 9h4v2c.6-1 1.9-2.2 3.9-2.2 3 0 4.1 2 4.1 5.1V21h-4v-6.5c0-1.3-.5-2.2-1.7-2.2-1 0-1.6.7-1.9 1.3-.1.2-.1.5-.1.8V21H9z"/></svg></a>
+      <a href="https://www.facebook.com/kwikledgers" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.6V3.7C15.9 3.6 15 3.5 13.9 3.5c-2.3 0-3.9 1.4-3.9 4v2.4H7.3V13H10v8z"/></svg></a>
+    </div>
+    <div class="footer-legal">
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_privacy">Privacy Policy</a>
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_terms">Terms of Service</a>
+    </div>
+    <div class="footer-copy" data-i18n="footer_copy">© 2025 Kwik Ledgers. All rights reserved.</div>
+  </div>
+</footer>
+</div>
+
+<div class="page-view" id="view-pricing">
+<!-- ============ HEADER ============ -->
+<div class="top-band">
+<header>
+  <img class="logo" src="https://kwikledgers.com/wp-content/uploads/2025/10/KwikLedgers-new-black.png" alt="KwikLedgers">
+  <nav>
+    <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+    <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+    <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+    <a href="#" data-view="pricing" class="nav-link active" data-i18n="nav_pricing">Pricing</a>
+  </nav>
+  <div class="header-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-pricing" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+    <button type="button" class="lang-toggle" id="langToggle-pricing" title="Change language" aria-label="Change language">🇺🇸</button>
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn-pricing" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="#484567" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  </div>
+</header>
+
+<!-- Dropdown mobile -->
+<div class="mobile-dropdown" id="mobileDropdown-pricing">
+  <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+  <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+  <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+  <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+  <div class="mobile-actions">
+    <a href="https://portal.kwikledgers.com/login" class="btn btn-outline" data-i18n="btn_login">Login</a>
+    <a href="#lead-form-pricing" class="btn btn-primary" data-i18n="btn_startnow">Start Now</a>
+  </div>
+</div>
+
+<!-- ============ PAGE HEAD ============ -->
+<div class="page-head wrap">
+  <h1 data-i18n="pricing_h1">Plans &amp; Pricing</h1>
+  <p data-i18n="pricing_sub">Choose the plan that fits your business needs — from freelancers to high-volume operations.</p>
+</div>
+</div>
+
+<!-- ============ PRICING GRID ============ -->
+<section class="pricing">
+  <div class="wrap">
+    <div class="price-grid">
+
+      <div class="price-card">
+        <h3 data-i18n="pricing_p1_name">First Ledgers</h3>
+        <div class="subtitle" data-i18n="pricing_p1_sub">(Bookkeeping) — Startup/New Business</div>
+        <div class="amount">$124<sup>.99</sup></div>
+        <div class="period" data-i18n="pricing_period">/month</div>
+        <a href="#lead-form-pricing" class="btn-choose" data-i18n="pricing_choose">Choose Plan</a>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p1_li1">Bookkeeping (up to 2 bank accounts)</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p1_li2">&lt;= 80 transactions / month</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p1_li3">AI analysis &amp; monthly financials</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p1_li4">Up to 1 Accounting review</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p1_li5">1099s: pay-as-you-go</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p1_li6">Support: phone/chat</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p1_li7">Business tax return: add-on</span></li>
+        </ul>
+        <div class="best-for" data-i18n="pricing_p1_best"><b>Best for:</b> new LLCs / freelancers with light activity.</div>
+      </div>
+
+      <div class="price-card featured">
+        <span class="featured-badge" data-i18n="pricing_badge">Most Popular</span>
+        <h3 data-i18n="pricing_p2_name">Growing Ledgers</h3>
+        <div class="subtitle" data-i18n="pricing_p2_sub">Growing stage Business</div>
+        <div class="amount">$249<sup>.99</sup></div>
+        <div class="period" data-i18n="pricing_period">/month</div>
+        <a href="#lead-form-pricing" class="btn-choose" data-i18n="pricing_choose">Choose Plan</a>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li1">Up to 4 Bank/Credit Card</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li2">3000 transactions/year</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li3">Up to 2 tax revision</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li4">Business Tax Return</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li5">AI analysis + KPI dashboard</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li6">10 1099 forms / year</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li7">10% Discount on services</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p2_li8">Support: phone/chat</span></li>
+        </ul>
+        <div class="best-for" data-i18n="pricing_p2_best"><b>Best for:</b> SMBs with regular vendor payments and growing volume.</div>
+      </div>
+
+      <div class="price-card">
+        <h3 data-i18n="pricing_p3_name">Running Ledgers</h3>
+        <div class="subtitle" data-i18n="pricing_p3_sub">Advanced Business</div>
+        <div class="amount">$374<sup>.99</sup></div>
+        <div class="period" data-i18n="pricing_period">/month</div>
+        <a href="#lead-form-pricing" class="btn-choose" data-i18n="pricing_choose">Choose Plan</a>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li1">Up to 6 Bank/Credit Card</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li2">&lt;= 450 transactions / month</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li3">Up to 3 Accounting review</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li4">Business Tax Return</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li5">AI analysis + KPI + Variance</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li6">25 1099 forms / year</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li7">20% Discount on services</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li8">Accountant letters included</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p3_li9">Support: phone/chat</span></li>
+        </ul>
+        <div class="best-for" data-i18n="pricing_p3_best"><b>Best for:</b> higher operations demand, multi-card, multi-bank operations.</div>
+      </div>
+
+      <div class="price-card">
+        <h3 data-i18n="pricing_p4_name">Power Ledgers</h3>
+        <div class="subtitle" data-i18n="pricing_p4_sub">Unlimited Power Business</div>
+        <div class="amount">$1249<sup>.99</sup></div>
+        <div class="period" data-i18n="pricing_period">/month</div>
+        <a href="#lead-form-pricing" class="btn-choose" data-i18n="pricing_choose">Choose Plan</a>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li1">Up to 10 Bank/Credit Card</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li2">&lt;= 1,500 transactions / month</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li3">Up to 4 Accounting review</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li4">Business Tax Return</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li5">AI analysis + Custom Metrics</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li6">50 1099 forms / year</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li7">20% Discount on services</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li8">Accountant letters (priority)</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li9">Quarterly strategic planning</span></li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.3l2.6 2.6 6.4-6.9" stroke="#2A5FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-i18n="pricing_p4_li10">Support: phone/chat + Consulting</span></li>
+        </ul>
+        <div class="best-for" data-i18n="pricing_p4_best"><b>Best for:</b> high-volume or management-heavy businesses needing proactive guidance.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA + FORMULÁRIO ============ -->
+<section class="cta-form" id="lead-form-pricing">
+  <div class="wrap">
+    <div class="cta-card">
+      <div class="cta-copy">
+        <img class="logo-mini" src="https://kwikledgers.com/wp-content/uploads/2025/10/KwikLedgers-new-black.png" alt="KwikLedgers">
+        <h2 data-i18n="cta_h2">Simplified financial management for your business.</h2>
+        <p data-i18n="cta_p1">We help you stay organized, compliant, and prepare your company to grow with confidence.</p>
+        <p data-i18n="cta_p2">Fill out the form and count on our team to guide each step while you focus on what you do best.</p>
+      </div>
+      <div class="form-panel">
+        <h3 data-i18n="form_h3">Get started today, it only takes a minute to fill out the form.</h3>
+        <!-- TODO: destino do submit — endpoint/integração definitiva a confirmar -->
+        <form action="#TODO-FORM-ENDPOINT" method="POST">
+          <div class="field"><label data-i18n="form_label_name">Name</label><input type="text" name="name" placeholder="Full Name" data-i18n-placeholder="form_placeholder_name"></div>
+          <div class="field"><label data-i18n="form_label_email">E-mail*</label><input type="email" name="email" placeholder="user@email.com" required data-i18n-placeholder="form_placeholder_email"></div>
+          <div class="field"><label data-i18n="form_label_phone">Phone Number</label><input type="tel" name="phone" placeholder="(ddd) 9-9999-9999" data-i18n-placeholder="form_placeholder_phone"></div>
+          <button type="submit" class="btn-submit" data-i18n="form_submit">Submit</button>
+          <label class="consent">
+            <input type="checkbox" required>
+            <span data-i18n="form_consent">By submitting this form, I agree to receive communications from the company and consent to the processing of my information in line with the Privacy Policy.</span>
+          </label>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="#" data-view="home" class="nav-link" data-i18n="nav_home">Home</a>
+      <a href="#" data-view="about" class="nav-link" data-i18n="nav_about">About</a>
+      <a href="#" data-view="services" class="nav-link" data-i18n="nav_services">Services</a>
+      <a href="#" data-view="pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/kwikledgers" aria-label="Instagram EUA"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.1"/></svg></a>
+      <a href="https://www.linkedin.com/company/kwikledgers/" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/><path d="M9 9h4v2c.6-1 1.9-2.2 3.9-2.2 3 0 4.1 2 4.1 5.1V21h-4v-6.5c0-1.3-.5-2.2-1.7-2.2-1 0-1.6.7-1.9 1.3-.1.2-.1.5-.1.8V21H9z"/></svg></a>
+      <a href="https://www.facebook.com/kwikledgers" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><path d="M13.5 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.6V3.7C15.9 3.6 15 3.5 13.9 3.5c-2.3 0-3.9 1.4-3.9 4v2.4H7.3V13H10v8z"/></svg></a>
+    </div>
+    <div class="footer-legal">
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_privacy">Privacy Policy</a>
+      <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=a99ecf2e-3f16-46c8-9386-7e67e2d4b9c0" data-i18n="footer_terms">Terms of Service</a>
+    </div>
+    <div class="footer-copy" data-i18n="footer_copy">© 2025 Kwik Ledgers. All rights reserved.</div>
+  </div>
+</footer>
+</div>
+
+<script>
+
+  // Dicionário de tradução — EN / PT / ES
+  var i18n = {
+    en: {
+      nav_home:"Home", nav_about:"About", nav_services:"Services", nav_pricing:"Pricing",
+      btn_login:"Login", btn_startnow:"Start Now",
+      hero_h1:"Your Business Growth Starts with Smarter Accounting",
+      hero_lead:"We provide trustworthy, accounting with expert human support. Stop worrying about complex finances and focus on what you do best: scaling your business.",
+      hero_check1:"Trusted by businesses across industries",
+      hero_check2:"100% digital, secure, and fully supported",
+      hero_check3:"AI-powered + Expert-reviewed",
+      hero_btn_start:"Start Now", hero_btn_seehow:"See How It Works",
+      testi_title:"Client Testimonials",
+      testi1_quote:"After more than a decade working with KwikLedgers, their AI and human verification system has reduced my costs, improved access to financial data, and optimized tax strategies. They're efficient and cost-saving, and I highly recommend them.",
+      testi1_role:"President of Supreme Public Adjusting LLC",
+      testi2_quote:"Before KwikLedgers, poor communication and turnover made things stressful. The onboarding here was simple, and since then, everything has been smooth. They are trustworthy and communicative, and I highly recommend them.",
+      testi2_role:"President/CEO of U9 Engineering &amp; Technology Corp",
+      testi3_quote:"I had a frustrating experience with my previous accounting firm, but switching to KwikLedgers changed everything. Their professionalism, efficiency, and reliable service keep my company compliant, and I highly recommend them.",
+      testi3_role:"CEO of GBN Global Business Network LLC",
+      cta_h2:"Simplified financial management for your business.",
+      cta_p1:"We help you stay organized, compliant, and prepare your company to grow with confidence.",
+      cta_p2:"Fill out the form and count on our team to guide each step while you focus on what you do best.",
+      form_h3:"Get started today, it only takes a minute to fill out the form.",
+      form_label_name:"Name", form_placeholder_name:"Full Name",
+      form_label_email:"E-mail*", form_placeholder_email:"user@email.com",
+      form_label_phone:"Phone Number", form_placeholder_phone:"(ddd) 9-9999-9999",
+      form_submit:"Submit",
+      form_consent:"By submitting this form, I agree to receive communications from the company and consent to the processing of my information in line with the Privacy Policy.",
+      why_title:"Why KwikLedgers?", why_sub:"Everything You Need to Stay Compliant and Grow — Without the Headaches",
+      why1_title:"Trust &amp; Compliance",
+      why1_li1:"We keep your books clean, so you can sleep easy",
+      why1_li2:"Stay focused on growth, we'll handle the rules",
+      why1_li3:"Trusted support that grows with your business.",
+      why2_title:"Flexibility &amp; Savings",
+      why2_li1:"Unbeatable Pricing", why2_li2:"Transparent Pricing, No Surprises", why2_li3:"Flexible Plans + Exclusive Discounts",
+      why3_title:"Support &amp; Innovation",
+      why3_li1:"Dedicated Support", why3_li2:"Multi-Language Support", why3_li3:"Innovative Financial &amp; Tax Tech",
+      apart_title:"What Sets Us Apart",
+      apart1_title:"Ultra-Affordable Plans", apart1_desc:"Professional Accounting without the premium price tag",
+      apart2_title:"100% Digital &amp; Secure", apart2_desc:"Access your finances anytime, anywhere",
+      apart3_title:"Transparent Pricing", apart3_desc:"No hidden fees, ever",
+      apart4_title:"Expert Oversight", apart4_desc:"Trusted experts watching your numbers, always.",
+      apart5_title:"Proven Track Record", apart5_desc:"Success stories written in our clients' books.",
+      footer_home:"Home", footer_about:"About", footer_services:"Services", footer_pricing:"Pricing",
+      footer_privacy:"Privacy Policy", footer_terms:"Terms of Service",
+      footer_copy:"© 2025 Kwik Ledgers. All rights reserved.",
+      about_h1:"Kwikledgers: Smarter Accounting for Growing Businesses.",
+      about_lead:"Meet the people and the purpose behind KwikLedgers. We're dedicated to simplifying your financial world so you can focus on what you do best.",
+      about_story_tag:"Our Story",
+      about_story_title:"From Complex Ledgers to a Simple Idea",
+      about_story_p1:"For over 20 years, our team of certified accountants worked with countless entrepreneurs and small business owners—innovators, creators, and builders—watching them get bogged down by the very thing that should be empowering them: their finances. Traditional accounting was complex, expensive, and disconnected from the fast-paced reality of modern business. We knew there had to be a better way.",
+      about_story_p2:"Driven by the belief that financial clarity is the key to growth, KwikLedgers was born. With two decades of hands-on accounting experience and a team of more than 10 certified professionals, we partnered with a leading technology company to build a platform that combines our deep financial expertise with cutting-edge AI. Our journey began by merging traditional accounting wisdom with innovative automation to create a seamless, all-in-one solution. Today, we're proud to be trusted by over 1,500 businesses who share our vision of simplified, intelligent financial management.",
+      about_team_tag:"Our Team",
+      about_team_title:"Meet the Experts Behind Your Success",
+      about_team_sub:"Our core team brings together over 20 years of combined accounting experience with modern technology expertise. Led by certified public accountants who have worked with businesses across industries—from startups to established enterprises—we understand the unique financial challenges that growing companies face.",
+      about_stat1_label:"Years of combined accounting experience",
+      about_stat2_label:"Certified accounting professionals",
+      about_stat3_label:"Businesses served",
+      about_stat4_label:"Industries supported",
+      about_tech_tag:"Our Technology Partnership",
+      about_tech_title:"Where Experience Meets Innovation",
+      about_tech_p:"Recognizing that the future of accounting lies in the perfect blend of human expertise and artificial intelligence, we partnered with a leading technology company to develop KwikLedgers. This collaboration allows us to offer the precision and insight that only comes from decades of hands-on experience, enhanced by the speed and accuracy of modern AI technology.",
+      about_why_tag:"Why We Built KwikLedgers",
+      about_why_title:"Solving Real Problems for Real Businesses",
+      about_why_p:"After two decades in traditional accounting, we saw the same problems over and over: business owners spending too much time on bookkeeping, paying too much for basic services, and struggling with outdated systems that could not keep up with their growth. We built KwikLedgers to solve these exact problems—combining our deep accounting knowledge with user-friendly technology that actually works for modern businesses.",
+      about_commit_tag:"Our Commitment to You",
+      about_commit_title:"Your Success is Our Legacy",
+      about_commit_p:"Every feature in KwikLedgers reflects our commitment to your success. From our transparent pricing to our dedicated support team, everything we do is designed to help you focus on what you do best: growing your business. When you succeed, we succeed—and that's been our philosophy for over 20 years.",
+      about_mvv_title:"Our Mission, Vision &amp; Values",
+      about_mission_title:"Mission",
+      about_mission_p:"To empower businesses with digital, reliable, and affordable accounting tools, freeing them to focus on growth and innovation.",
+      about_vision_title:"Vision",
+      about_vision_p:"To become the leading accounting platform for startups and SMBs in the U.S., celebrated for our technology, transparency, and unwavering customer support.",
+      about_values_title:"Values",
+      about_values_1:"<b>Customer-First:</b> Your success is our success. We build our solutions around your needs.",
+      about_values_2:"<b>Radical Transparency:</b> No hidden fees, no surprises. Just clear, honest pricing and communication.",
+      about_values_3:"<b>Innovation in Simplicity:</b> We use powerful technology to make your life simpler, not more complicated.",
+      about_values_4:"<b>Uncompromising Security:</b> We protect your data with the highest standards of security and compliance.",
+      about_cta_h2:"Ready to Join Our Journey?",
+      about_cta_p:"<b>Solve this now.</b> Talk to our team about your company's accounting challenges. Gain clarity on compliance, cash flow, and tax filings so you can stay focused on growth.",
+      services_h1:"Simplify Your Accounting. Empower Your Growth.",
+      services_lead:"At <b>KwikLedgers</b>, we believe <b>accounting should be simple, affordable, and reliable</b>—so you can focus on growing your business. With over <b>15 years in the market</b> and experience with <b>1500+ businesses</b>, we combine <b>smart technology with expert review</b> to ensure <b>quality and peace of mind in every delivery.</b>",
+      services_core_title:"Our Core Services",
+      services_core_sub:"Whether you're just starting your business or scaling up, KwikLedgers offers a complete financial solution",
+      services_core1_title:"Compliance &amp; Filings",
+      services_core1_desc:"We handle your bookkeeping and tax filings with accuracy and consistency. From financial records to federal and state compliance, we keep everything up to date, reduce risks, and ensure audit readiness.",
+      services_core2_title:"Financial Consulting &amp; Advisory",
+      services_core2_desc:"We help you make smarter financial decisions with tailored strategies for growth, compliance, and efficiency. From planning to execution, we ensure your business stays on track and profitable.",
+      services_core3_title:"Insights &amp; Growth",
+      services_core3_desc:"Turn numbers into strategic decisions. With real-time financial reporting, tax planning, and outsourced accounting, we help you save money, increase efficiency, and scale your business sustainably.",
+      services_dl_title:"Key IRS Tax Deadlines You Should Know",
+      services_dl_sub:"Managing your deadlines is critical to avoiding penalties and ensuring compliance. Here are the key dates every business should track:",
+      services_dl1_date:"January",
+      services_dl1_title:"Deadline to submit",
+      services_dl1_desc:"Deadline to submit prior-year documents and issue Form 1099 to contractors.",
+      services_dl2_date:"March 15",
+      services_dl2_title:"LLC &amp; S-Corp Tax Filing Deadline",
+      services_dl2_desc:"Corporate Income Tax filing for LLCs (Form 1065) and S-Corps. Also the last day to request an extension for these entities.",
+      services_dl3_date:"April 15",
+      services_dl3_title:"C-Corp &amp; Personal Tax Filing Deadline",
+      services_dl3_desc:"Filing deadline for C-Corps and personal tax returns. Also the deadline to file extensions.",
+      services_dl4_date:"May 1",
+      services_dl4_title:"Florida Annual Report Due",
+      services_dl4_desc:"All Florida business entities—including LLCs and corporations—must file their Annual Report with the state by this deadline to maintain active status and avoid penalties.",
+      services_dl5_date:"October 15",
+      services_dl5_title:"Final Extended Tax Deadline",
+      services_dl5_desc:"October 15 is the final day to file extended federal tax returns for C-Corporations and individuals. After this date, penalties may apply for late filings.",
+      services_dl_note:"*Note: State deadlines may vary. We help ensure you're up to date across all jurisdictions.",
+      services_why_title:"Why Choose KwikLedgers?",
+      services_why_intro:"KwikLedgers combines intelligent automation with human expertise to give you total control and visibility over your business finances. Here's what sets us apart:",
+      services_wc1_title:"Smart &amp; Verified Accounting",
+      services_wc1_desc:"AI-powered solutions reviewed by certified accountants",
+      services_wc2_title:"Secure Access, Anytime",
+      services_wc2_desc:"100% secure cloud-based access—anytime, anywhere",
+      services_wc3_title:"Transparent Full-Service",
+      services_wc3_desc:"Full-service digital accounting with no hidden fees",
+      services_wc4_title:"Plans That Fit Your Budget",
+      services_wc4_desc:"Flexible plans, starting at just $1/month",
+      services_wc5_title:"Support Across States &amp; Industries",
+      services_wc5_desc:"Compliance and scalability for multiple jurisdictions and sectors.",
+      services_wc6_title:"Dedicated Expert Support",
+      services_wc6_desc:"Direct access to certified accountants and advisors to guide your U.S. business journey.",
+      pricing_h1:"Plans &amp; Pricing",
+      pricing_sub:"Choose the plan that fits your business needs — from freelancers to high-volume operations.",
+      pricing_period:"/month",
+      pricing_choose:"Choose Plan",
+      pricing_badge:"Most Popular",
+      pricing_p1_name:"First Ledgers",
+      pricing_p1_sub:"(Bookkeeping) — Startup/New Business",
+      pricing_p1_li1:"Bookkeeping (up to 2 bank accounts)",
+      pricing_p1_li2:"&lt;= 80 transactions / month",
+      pricing_p1_li3:"AI analysis &amp; monthly financials",
+      pricing_p1_li4:"Up to 1 Accounting review",
+      pricing_p1_li5:"1099s: pay-as-you-go",
+      pricing_p1_li6:"Support: phone/chat",
+      pricing_p1_li7:"Business tax return: add-on",
+      pricing_p1_best:"<b>Best for:</b> new LLCs / freelancers with light activity.",
+      pricing_p2_name:"Growing Ledgers",
+      pricing_p2_sub:"Growing stage Business",
+      pricing_p2_li1:"Up to 4 Bank/Credit Card",
+      pricing_p2_li2:"3000 transactions/year",
+      pricing_p2_li3:"Up to 2 tax revision",
+      pricing_p2_li4:"Business Tax Return",
+      pricing_p2_li5:"AI analysis + KPI dashboard",
+      pricing_p2_li6:"10 1099 forms / year",
+      pricing_p2_li7:"10% Discount on services",
+      pricing_p2_li8:"Support: phone/chat",
+      pricing_p2_best:"<b>Best for:</b> SMBs with regular vendor payments and growing volume.",
+      pricing_p3_name:"Running Ledgers",
+      pricing_p3_sub:"Advanced Business",
+      pricing_p3_li1:"Up to 6 Bank/Credit Card",
+      pricing_p3_li2:"&lt;= 450 transactions / month",
+      pricing_p3_li3:"Up to 3 Accounting review",
+      pricing_p3_li4:"Business Tax Return",
+      pricing_p3_li5:"AI analysis + KPI + Variance",
+      pricing_p3_li6:"25 1099 forms / year",
+      pricing_p3_li7:"20% Discount on services",
+      pricing_p3_li8:"Accountant letters included",
+      pricing_p3_li9:"Support: phone/chat",
+      pricing_p3_best:"<b>Best for:</b> higher operations demand, multi-card, multi-bank operations.",
+      pricing_p4_name:"Power Ledgers",
+      pricing_p4_sub:"Unlimited Power Business",
+      pricing_p4_li1:"Up to 10 Bank/Credit Card",
+      pricing_p4_li2:"&lt;= 1,500 transactions / month",
+      pricing_p4_li3:"Up to 4 Accounting review",
+      pricing_p4_li4:"Business Tax Return",
+      pricing_p4_li5:"AI analysis + Custom Metrics",
+      pricing_p4_li6:"50 1099 forms / year",
+      pricing_p4_li7:"20% Discount on services",
+      pricing_p4_li8:"Accountant letters (priority)",
+      pricing_p4_li9:"Quarterly strategic planning",
+      pricing_p4_li10:"Support: phone/chat + Consulting",
+      pricing_p4_best:"<b>Best for:</b> high-volume or management-heavy businesses needing proactive guidance."
+    },
+    pt: {
+      nav_home:"Início", nav_about:"Sobre", nav_services:"Serviços", nav_pricing:"Preços",
+      btn_login:"Entrar", btn_startnow:"Comece Agora",
+      hero_h1:"O Crescimento do Seu Negócio Começa com uma Contabilidade Mais Inteligente",
+      hero_lead:"Oferecemos contabilidade confiável com suporte humano especializado. Pare de se preocupar com finanças complexas e foque no que você faz de melhor: fazer seu negócio crescer.",
+      hero_check1:"Confiança de empresas de diversos setores",
+      hero_check2:"100% digital, seguro e com suporte completo",
+      hero_check3:"Tecnologia de IA + revisão de especialistas",
+      hero_btn_start:"Comece Agora", hero_btn_seehow:"Veja Como Funciona",
+      testi_title:"Depoimentos de Clientes",
+      testi1_quote:"Depois de mais de uma década trabalhando com a KwikLedgers, o sistema deles de IA e verificação humana reduziu meus custos, melhorou o acesso aos dados financeiros e otimizou estratégias fiscais. Eles são eficientes e econômicos, e eu recomendo muito.",
+      testi1_role:"Presidente da Supreme Public Adjusting LLC",
+      testi2_quote:"Antes da KwikLedgers, a comunicação ruim e a rotatividade deixavam tudo estressante. O processo de integração foi simples e, desde então, tudo tem corrido bem. Eles são confiáveis e comunicativos, e eu recomendo muito.",
+      testi2_role:"Presidente/CEO da U9 Engineering &amp; Technology Corp",
+      testi3_quote:"Tive uma experiência frustrante com meu escritório de contabilidade anterior, mas mudar para a KwikLedgers mudou tudo. O profissionalismo, a eficiência e o serviço confiável deles mantêm minha empresa em conformidade, e eu recomendo muito.",
+      testi3_role:"CEO da GBN Global Business Network LLC",
+      cta_h2:"Gestão financeira simplificada para o seu negócio.",
+      cta_p1:"Ajudamos você a se manter organizado, em conformidade e preparado para crescer com confiança.",
+      cta_p2:"Preencha o formulário e conte com nossa equipe para guiar cada etapa enquanto você foca no que faz de melhor.",
+      form_h3:"Comece hoje, leva apenas um minuto para preencher o formulário.",
+      form_label_name:"Nome", form_placeholder_name:"Nome completo",
+      form_label_email:"E-mail*", form_placeholder_email:"voce@email.com",
+      form_label_phone:"Telefone", form_placeholder_phone:"(dd) 9-9999-9999",
+      form_submit:"Enviar",
+      form_consent:"Ao enviar este formulário, concordo em receber comunicações da empresa e consinto com o processamento das minhas informações de acordo com a Política de Privacidade.",
+      why_title:"Por que a KwikLedgers?", why_sub:"Tudo o que você precisa para ficar em conformidade e crescer — sem dor de cabeça",
+      why1_title:"Confiança e Conformidade",
+      why1_li1:"Mantemos sua contabilidade em dia, para você dormir tranquilo",
+      why1_li2:"Foque no crescimento, nós cuidamos das regras",
+      why1_li3:"Suporte de confiança que cresce junto com seu negócio.",
+      why2_title:"Flexibilidade e Economia",
+      why2_li1:"Preços imbatíveis", why2_li2:"Preços transparentes, sem surpresas", why2_li3:"Planos flexíveis + descontos exclusivos",
+      why3_title:"Suporte e Inovação",
+      why3_li1:"Suporte dedicado", why3_li2:"Suporte multilíngue", why3_li3:"Tecnologia financeira e fiscal inovadora",
+      apart_title:"O Que Nos Diferencia",
+      apart1_title:"Planos Super Acessíveis", apart1_desc:"Contabilidade profissional sem o preço premium",
+      apart2_title:"100% Digital e Seguro", apart2_desc:"Acesse suas finanças a qualquer hora, em qualquer lugar",
+      apart3_title:"Preços Transparentes", apart3_desc:"Sem taxas escondidas, nunca",
+      apart4_title:"Supervisão Especializada", apart4_desc:"Especialistas de confiança cuidando dos seus números, sempre.",
+      apart5_title:"Histórico Comprovado", apart5_desc:"Histórias de sucesso escritas nos livros contábeis dos nossos clientes.",
+      footer_home:"Início", footer_about:"Sobre", footer_services:"Serviços", footer_pricing:"Preços",
+      footer_privacy:"Política de Privacidade", footer_terms:"Termos de Serviço",
+      footer_copy:"© 2025 Kwik Ledgers. Todos os direitos reservados.",
+      about_h1:"Kwikledgers: Contabilidade Mais Inteligente para Empresas em Crescimento.",
+      about_lead:"Conheça as pessoas e o propósito por trás da KwikLedgers. Somos dedicados a simplificar o seu mundo financeiro para que você possa focar no que faz de melhor.",
+      about_story_tag:"Nossa História",
+      about_story_title:"De Contabilidades Complexas a uma Ideia Simples",
+      about_story_p1:"Por mais de 20 anos, nossa equipe de contadores certificados trabalhou com inúmeros empreendedores e donos de pequenos negócios — inovadores, criadores e construtores — vendo-os ficarem presos justamente naquilo que deveria os fortalecer: suas finanças. A contabilidade tradicional era complexa, cara e desconectada da realidade acelerada dos negócios modernos. Sabíamos que precisava existir um jeito melhor.",
+      about_story_p2:"Movidos pela crença de que clareza financeira é a chave para o crescimento, a KwikLedgers nasceu. Com duas décadas de experiência prática em contabilidade e uma equipe de mais de 10 profissionais certificados, fizemos uma parceria com uma empresa de tecnologia líder para construir uma plataforma que combina nossa profunda expertise financeira com IA de ponta. Nossa jornada começou unindo a sabedoria contábil tradicional com automação inovadora para criar uma solução fluida e completa. Hoje, temos orgulho de contar com a confiança de mais de 1.500 empresas que compartilham nossa visão de gestão financeira simplificada e inteligente.",
+      about_team_tag:"Nossa Equipe",
+      about_team_title:"Conheça os Especialistas por Trás do Seu Sucesso",
+      about_team_sub:"Nossa equipe principal reúne mais de 20 anos de experiência contábil combinada com expertise em tecnologia moderna. Liderados por contadores públicos certificados que já trabalharam com empresas de diversos setores — de startups a empresas consolidadas — entendemos os desafios financeiros únicos que empresas em crescimento enfrentam.",
+      about_stat1_label:"Anos de experiência contábil combinada",
+      about_stat2_label:"Profissionais de contabilidade certificados",
+      about_stat3_label:"Empresas atendidas",
+      about_stat4_label:"Setores atendidos",
+      about_tech_tag:"Nossa Parceria Tecnológica",
+      about_tech_title:"Onde a Experiência Encontra a Inovação",
+      about_tech_p:"Reconhecendo que o futuro da contabilidade está na combinação perfeita entre expertise humana e inteligência artificial, fizemos uma parceria com uma empresa de tecnologia líder para desenvolver a KwikLedgers. Essa colaboração nos permite oferecer a precisão e a visão que só vêm de décadas de experiência prática, potencializadas pela velocidade e precisão da tecnologia de IA moderna.",
+      about_why_tag:"Por Que Criamos a KwikLedgers",
+      about_why_title:"Resolvendo Problemas Reais para Empresas Reais",
+      about_why_p:"Depois de duas décadas na contabilidade tradicional, vimos os mesmos problemas se repetirem: donos de negócio gastando tempo demais com contabilidade, pagando caro demais por serviços básicos e lutando com sistemas ultrapassados que não acompanhavam o crescimento deles. Criamos a KwikLedgers para resolver exatamente esses problemas — combinando nosso profundo conhecimento contábil com tecnologia fácil de usar que realmente funciona para empresas modernas.",
+      about_commit_tag:"Nosso Compromisso com Você",
+      about_commit_title:"Seu Sucesso é o Nosso Legado",
+      about_commit_p:"Cada funcionalidade da KwikLedgers reflete nosso compromisso com o seu sucesso. Do nosso preço transparente à nossa equipe de suporte dedicada, tudo o que fazemos é pensado para ajudar você a focar no que faz de melhor: fazer seu negócio crescer. Quando você vence, nós vencemos — e essa tem sido nossa filosofia por mais de 20 anos.",
+      about_mvv_title:"Nossa Missão, Visão &amp; Valores",
+      about_mission_title:"Missão",
+      about_mission_p:"Capacitar empresas com ferramentas contábeis digitais, confiáveis e acessíveis, liberando-as para focar em crescimento e inovação.",
+      about_vision_title:"Visão",
+      about_vision_p:"Nos tornarmos a plataforma contábil líder para startups e pequenas e médias empresas nos EUA, reconhecida pela nossa tecnologia, transparência e suporte inabalável ao cliente.",
+      about_values_title:"Valores",
+      about_values_1:"<b>Cliente em Primeiro Lugar:</b> Seu sucesso é o nosso sucesso. Construímos nossas soluções em torno das suas necessidades.",
+      about_values_2:"<b>Transparência Radical:</b> Sem taxas escondidas, sem surpresas. Só preço e comunicação claros e honestos.",
+      about_values_3:"<b>Inovação com Simplicidade:</b> Usamos tecnologia poderosa para deixar sua vida mais simples, não mais complicada.",
+      about_values_4:"<b>Segurança Inegociável:</b> Protegemos seus dados com os mais altos padrões de segurança e conformidade.",
+      about_cta_h2:"Pronto para Se Juntar à Nossa Jornada?",
+      about_cta_p:"<b>Resolva isso agora.</b> Fale com nossa equipe sobre os desafios contábeis da sua empresa. Ganhe clareza sobre conformidade, fluxo de caixa e declarações de impostos para se manter focado no crescimento.",
+      services_h1:"Simplifique Sua Contabilidade. Impulsione Seu Crescimento.",
+      services_lead:"Na <b>KwikLedgers</b>, acreditamos que <b>a contabilidade deve ser simples, acessível e confiável</b> — para que você possa focar em fazer seu negócio crescer. Com mais de <b>15 anos no mercado</b> e experiência com <b>mais de 1.500 empresas</b>, combinamos <b>tecnologia inteligente com revisão especializada</b> para garantir <b>qualidade e tranquilidade em cada entrega.</b>",
+      services_core_title:"Nossos Serviços Principais",
+      services_core_sub:"Seja você que está começando o negócio ou já em fase de expansão, a KwikLedgers oferece uma solução financeira completa",
+      services_core1_title:"Conformidade &amp; Declarações",
+      services_core1_desc:"Cuidamos da sua contabilidade e declarações fiscais com precisão e consistência. De registros financeiros à conformidade federal e estadual, mantemos tudo atualizado, reduzimos riscos e garantimos que você esteja pronto para auditorias.",
+      services_core2_title:"Consultoria &amp; Assessoria Financeira",
+      services_core2_desc:"Ajudamos você a tomar decisões financeiras mais inteligentes com estratégias personalizadas para crescimento, conformidade e eficiência. Do planejamento à execução, garantimos que seu negócio se mantenha no caminho certo e lucrativo.",
+      services_core3_title:"Insights &amp; Crescimento",
+      services_core3_desc:"Transforme números em decisões estratégicas. Com relatórios financeiros em tempo real, planejamento fiscal e contabilidade terceirizada, ajudamos você a economizar dinheiro, aumentar a eficiência e crescer de forma sustentável.",
+      services_dl_title:"Prazos-Chave do IRS Que Você Precisa Conhecer",
+      services_dl_sub:"Gerenciar seus prazos é essencial para evitar multas e garantir conformidade. Aqui estão as datas-chave que toda empresa deve acompanhar:",
+      services_dl1_date:"Janeiro",
+      services_dl1_title:"Prazo para envio",
+      services_dl1_desc:"Prazo para enviar documentos do ano anterior e emitir o Formulário 1099 para prestadores de serviço.",
+      services_dl2_date:"15 de março",
+      services_dl2_title:"Prazo de Declaração para LLC &amp; S-Corp",
+      services_dl2_desc:"Declaração do Imposto de Renda Corporativo para LLCs (Formulário 1065) e S-Corps. Também é o último dia para solicitar extensão para essas entidades.",
+      services_dl3_date:"15 de abril",
+      services_dl3_title:"Prazo de Declaração para C-Corp &amp; Pessoa Física",
+      services_dl3_desc:"Prazo de declaração para C-Corps e declarações pessoais de imposto de renda. Também é o prazo para solicitar extensões.",
+      services_dl4_date:"1º de maio",
+      services_dl4_title:"Vencimento do Relatório Anual da Flórida",
+      services_dl4_desc:"Todas as entidades empresariais da Flórida — incluindo LLCs e corporações — devem enviar seu Relatório Anual ao estado até esse prazo para manter o status ativo e evitar multas.",
+      services_dl5_date:"15 de outubro",
+      services_dl5_title:"Prazo Final de Extensão Fiscal",
+      services_dl5_desc:"15 de outubro é o último dia para declarar impostos federais com extensão para C-Corporations e pessoas físicas. Após essa data, multas podem se aplicar a declarações atrasadas.",
+      services_dl_note:"*Nota: os prazos estaduais podem variar. Ajudamos a garantir que você esteja em dia em todas as jurisdições.",
+      services_why_title:"Por Que Escolher a KwikLedgers?",
+      services_why_intro:"A KwikLedgers combina automação inteligente com expertise humana para te dar controle total e visibilidade sobre as finanças do seu negócio. Veja o que nos diferencia:",
+      services_wc1_title:"Contabilidade Inteligente e Verificada",
+      services_wc1_desc:"Soluções com IA revisadas por contadores certificados",
+      services_wc2_title:"Acesso Seguro, a Qualquer Momento",
+      services_wc2_desc:"Acesso 100% seguro baseado em nuvem — a qualquer hora, em qualquer lugar",
+      services_wc3_title:"Serviço Completo e Transparente",
+      services_wc3_desc:"Contabilidade digital completa sem taxas escondidas",
+      services_wc4_title:"Planos Que Cabem no Seu Orçamento",
+      services_wc4_desc:"Planos flexíveis, a partir de apenas $1/mês",
+      services_wc5_title:"Suporte em Vários Estados &amp; Setores",
+      services_wc5_desc:"Conformidade e escalabilidade para múltiplas jurisdições e setores.",
+      services_wc6_title:"Suporte Especializado Dedicado",
+      services_wc6_desc:"Acesso direto a contadores e consultores certificados para guiar sua jornada empresarial nos EUA.",
+      pricing_h1:"Planos &amp; Preços",
+      pricing_sub:"Escolha o plano que se encaixa nas necessidades do seu negócio — de freelancers a operações de alto volume.",
+      pricing_period:"/mês",
+      pricing_choose:"Escolher Plano",
+      pricing_badge:"Mais Popular",
+      pricing_p1_name:"First Ledgers",
+      pricing_p1_sub:"(Contabilidade) — Startup/Novo Negócio",
+      pricing_p1_li1:"Contabilidade (até 2 contas bancárias)",
+      pricing_p1_li2:"&lt;= 80 transações / mês",
+      pricing_p1_li3:"Análise com IA &amp; financeiro mensal",
+      pricing_p1_li4:"Até 1 revisão contábil",
+      pricing_p1_li5:"1099s: conforme o uso",
+      pricing_p1_li6:"Suporte: telefone/chat",
+      pricing_p1_li7:"Declaração de imposto empresarial: adicional",
+      pricing_p1_best:"<b>Ideal para:</b> novas LLCs / freelancers com atividade leve.",
+      pricing_p2_name:"Growing Ledgers",
+      pricing_p2_sub:"Negócio em Fase de Crescimento",
+      pricing_p2_li1:"Até 4 contas bancárias/cartão de crédito",
+      pricing_p2_li2:"3000 transações/ano",
+      pricing_p2_li3:"Até 2 revisões fiscais",
+      pricing_p2_li4:"Declaração de Imposto Empresarial",
+      pricing_p2_li5:"Análise com IA + painel de KPI",
+      pricing_p2_li6:"10 formulários 1099 / ano",
+      pricing_p2_li7:"10% de desconto em serviços",
+      pricing_p2_li8:"Suporte: telefone/chat",
+      pricing_p2_best:"<b>Ideal para:</b> PMEs com pagamentos regulares a fornecedores e volume crescente.",
+      pricing_p3_name:"Running Ledgers",
+      pricing_p3_sub:"Negócio Avançado",
+      pricing_p3_li1:"Até 6 contas bancárias/cartão de crédito",
+      pricing_p3_li2:"&lt;= 450 transações / mês",
+      pricing_p3_li3:"Até 3 revisões contábeis",
+      pricing_p3_li4:"Declaração de Imposto Empresarial",
+      pricing_p3_li5:"Análise com IA + KPI + Variação",
+      pricing_p3_li6:"25 formulários 1099 / ano",
+      pricing_p3_li7:"20% de desconto em serviços",
+      pricing_p3_li8:"Cartas de contador incluídas",
+      pricing_p3_li9:"Suporte: telefone/chat",
+      pricing_p3_best:"<b>Ideal para:</b> maior demanda operacional, operações com múltiplos cartões e bancos.",
+      pricing_p4_name:"Power Ledgers",
+      pricing_p4_sub:"Negócio de Poder Ilimitado",
+      pricing_p4_li1:"Até 10 contas bancárias/cartão de crédito",
+      pricing_p4_li2:"&lt;= 1.500 transações / mês",
+      pricing_p4_li3:"Até 4 revisões contábeis",
+      pricing_p4_li4:"Declaração de Imposto Empresarial",
+      pricing_p4_li5:"Análise com IA + Métricas Personalizadas",
+      pricing_p4_li6:"50 formulários 1099 / ano",
+      pricing_p4_li7:"20% de desconto em serviços",
+      pricing_p4_li8:"Cartas de contador (prioritárias)",
+      pricing_p4_li9:"Planejamento estratégico trimestral",
+      pricing_p4_li10:"Suporte: telefone/chat + Consultoria",
+      pricing_p4_best:"<b>Ideal para:</b> negócios de alto volume ou com grande carga de gestão que precisam de orientação proativa."
+    },
+    es: {
+      nav_home:"Inicio", nav_about:"Nosotros", nav_services:"Servicios", nav_pricing:"Precios",
+      btn_login:"Iniciar sesión", btn_startnow:"Comenzar Ahora",
+      hero_h1:"El Crecimiento de Tu Negocio Comienza con una Contabilidad Más Inteligente",
+      hero_lead:"Ofrecemos contabilidad confiable con soporte humano experto. Deja de preocuparte por finanzas complejas y concéntrate en lo que mejor sabes hacer: hacer crecer tu negocio.",
+      hero_check1:"Confiado por empresas de diversas industrias",
+      hero_check2:"100% digital, seguro y con soporte completo",
+      hero_check3:"Impulsado por IA + revisado por expertos",
+      hero_btn_start:"Comenzar Ahora", hero_btn_seehow:"Ver Cómo Funciona",
+      testi_title:"Testimonios de Clientes",
+      testi1_quote:"Después de más de una década trabajando con KwikLedgers, su sistema de IA y verificación humana ha reducido mis costos, mejorado el acceso a los datos financieros y optimizado las estrategias fiscales. Son eficientes y ahorran costos, y los recomiendo mucho.",
+      testi1_role:"Presidente de Supreme Public Adjusting LLC",
+      testi2_quote:"Antes de KwikLedgers, la mala comunicación y la rotación hacían las cosas estresantes. La incorporación fue sencilla y, desde entonces, todo ha funcionado sin problemas. Son confiables y comunicativos, y los recomiendo mucho.",
+      testi2_role:"Presidente/CEO de U9 Engineering &amp; Technology Corp",
+      testi3_quote:"Tuve una experiencia frustrante con mi anterior firma de contabilidad, pero cambiar a KwikLedgers lo cambió todo. Su profesionalismo, eficiencia y servicio confiable mantienen a mi empresa en cumplimiento, y los recomiendo mucho.",
+      testi3_role:"CEO de GBN Global Business Network LLC",
+      cta_h2:"Gestión financiera simplificada para tu negocio.",
+      cta_p1:"Te ayudamos a mantenerte organizado, en cumplimiento y preparado para crecer con confianza.",
+      cta_p2:"Completa el formulario y cuenta con nuestro equipo para guiarte en cada paso mientras te enfocas en lo que mejor haces.",
+      form_h3:"Comienza hoy, solo toma un minuto completar el formulario.",
+      form_label_name:"Nombre", form_placeholder_name:"Nombre completo",
+      form_label_email:"Correo electrónico*", form_placeholder_email:"tu@email.com",
+      form_label_phone:"Teléfono", form_placeholder_phone:"(xx) 9-9999-9999",
+      form_submit:"Enviar",
+      form_consent:"Al enviar este formulario, acepto recibir comunicaciones de la empresa y consiento el procesamiento de mi información de acuerdo con la Política de Privacidad.",
+      why_title:"¿Por qué KwikLedgers?", why_sub:"Todo lo que necesitas para mantenerte en cumplimiento y crecer — sin dolores de cabeza",
+      why1_title:"Confianza y Cumplimiento",
+      why1_li1:"Mantenemos tu contabilidad al día, para que puedas dormir tranquilo",
+      why1_li2:"Concéntrate en crecer, nosotros nos encargamos de las reglas",
+      why1_li3:"Soporte confiable que crece junto con tu negocio.",
+      why2_title:"Flexibilidad y Ahorro",
+      why2_li1:"Precios inmejorables", why2_li2:"Precios transparentes, sin sorpresas", why2_li3:"Planes flexibles + descuentos exclusivos",
+      why3_title:"Soporte e Innovación",
+      why3_li1:"Soporte dedicado", why3_li2:"Soporte multilingüe", why3_li3:"Tecnología financiera y fiscal innovadora",
+      apart_title:"Qué Nos Diferencia",
+      apart1_title:"Planes Súper Accesibles", apart1_desc:"Contabilidad profesional sin el precio premium",
+      apart2_title:"100% Digital y Seguro", apart2_desc:"Accede a tus finanzas en cualquier momento, desde cualquier lugar",
+      apart3_title:"Precios Transparentes", apart3_desc:"Sin tarifas ocultas, nunca",
+      apart4_title:"Supervisión Experta", apart4_desc:"Expertos de confianza cuidando tus números, siempre.",
+      apart5_title:"Trayectoria Comprobada", apart5_desc:"Historias de éxito escritas en los libros contables de nuestros clientes.",
+      footer_home:"Inicio", footer_about:"Nosotros", footer_services:"Servicios", footer_pricing:"Precios",
+      footer_privacy:"Política de Privacidad", footer_terms:"Términos de Servicio",
+      footer_copy:"© 2025 Kwik Ledgers. Todos los derechos reservados.",
+      about_h1:"Kwikledgers: Contabilidad Más Inteligente para Empresas en Crecimiento.",
+      about_lead:"Conoce a las personas y el propósito detrás de KwikLedgers. Nos dedicamos a simplificar tu mundo financiero para que puedas concentrarte en lo que mejor sabes hacer.",
+      about_story_tag:"Nuestra Historia",
+      about_story_title:"De Libros Contables Complejos a una Idea Simple",
+      about_story_p1:"Durante más de 20 años, nuestro equipo de contadores certificados trabajó con innumerables emprendedores y dueños de pequeñas empresas —innovadores, creadores y constructores— viéndolos verse abrumados por lo mismo que debería empoderarlos: sus finanzas. La contabilidad tradicional era compleja, costosa y estaba desconectada de la realidad acelerada de los negocios modernos. Sabíamos que tenía que haber una mejor manera.",
+      about_story_p2:"Impulsados por la creencia de que la claridad financiera es la clave del crecimiento, nació KwikLedgers. Con dos décadas de experiencia práctica en contabilidad y un equipo de más de 10 profesionales certificados, nos asociamos con una empresa tecnológica líder para construir una plataforma que combina nuestra profunda experiencia financiera con IA de vanguardia. Nuestro viaje comenzó fusionando la sabiduría contable tradicional con la automatización innovadora para crear una solución fluida y todo en uno. Hoy, nos enorgullece contar con la confianza de más de 1,500 empresas que comparten nuestra visión de una gestión financiera simplificada e inteligente.",
+      about_team_tag:"Nuestro Equipo",
+      about_team_title:"Conoce a los Expertos Detrás de Tu Éxito",
+      about_team_sub:"Nuestro equipo principal reúne más de 20 años de experiencia contable combinada con experiencia en tecnología moderna. Liderados por contadores públicos certificados que han trabajado con empresas de diversas industrias —desde startups hasta empresas establecidas— entendemos los desafíos financieros únicos que enfrentan las empresas en crecimiento.",
+      about_stat1_label:"Años de experiencia contable combinada",
+      about_stat2_label:"Profesionales de contabilidad certificados",
+      about_stat3_label:"Empresas atendidas",
+      about_stat4_label:"Industrias respaldadas",
+      about_tech_tag:"Nuestra Alianza Tecnológica",
+      about_tech_title:"Donde la Experiencia se Encuentra con la Innovación",
+      about_tech_p:"Reconociendo que el futuro de la contabilidad radica en la combinación perfecta entre experiencia humana e inteligencia artificial, nos asociamos con una empresa tecnológica líder para desarrollar KwikLedgers. Esta colaboración nos permite ofrecer la precisión y la perspectiva que solo provienen de décadas de experiencia práctica, potenciadas por la velocidad y precisión de la tecnología de IA moderna.",
+      about_why_tag:"Por Qué Creamos KwikLedgers",
+      about_why_title:"Resolviendo Problemas Reales para Empresas Reales",
+      about_why_p:"Después de dos décadas en la contabilidad tradicional, vimos los mismos problemas una y otra vez: dueños de negocios dedicando demasiado tiempo a la contabilidad, pagando de más por servicios básicos y luchando con sistemas obsoletos que no podían seguir el ritmo de su crecimiento. Creamos KwikLedgers para resolver exactamente estos problemas —combinando nuestro profundo conocimiento contable con tecnología fácil de usar que realmente funciona para las empresas modernas.",
+      about_commit_tag:"Nuestro Compromiso Contigo",
+      about_commit_title:"Tu Éxito es Nuestro Legado",
+      about_commit_p:"Cada función de KwikLedgers refleja nuestro compromiso con tu éxito. Desde nuestros precios transparentes hasta nuestro equipo de soporte dedicado, todo lo que hacemos está diseñado para ayudarte a concentrarte en lo que mejor sabes hacer: hacer crecer tu negocio. Cuando tú triunfas, nosotros triunfamos —y esa ha sido nuestra filosofía durante más de 20 años.",
+      about_mvv_title:"Nuestra Misión, Visión &amp; Valores",
+      about_mission_title:"Misión",
+      about_mission_p:"Empoderar a las empresas con herramientas contables digitales, confiables y accesibles, liberándolas para concentrarse en el crecimiento y la innovación.",
+      about_vision_title:"Visión",
+      about_vision_p:"Convertirnos en la plataforma contable líder para startups y pequeñas y medianas empresas en EE. UU., reconocida por nuestra tecnología, transparencia y soporte al cliente inquebrantable.",
+      about_values_title:"Valores",
+      about_values_1:"<b>Cliente Primero:</b> Tu éxito es nuestro éxito. Construimos nuestras soluciones en torno a tus necesidades.",
+      about_values_2:"<b>Transparencia Radical:</b> Sin tarifas ocultas, sin sorpresas. Solo precios y comunicación claros y honestos.",
+      about_values_3:"<b>Innovación con Simplicidad:</b> Usamos tecnología poderosa para hacer tu vida más simple, no más complicada.",
+      about_values_4:"<b>Seguridad Sin Concesiones:</b> Protegemos tus datos con los más altos estándares de seguridad y cumplimiento.",
+      about_cta_h2:"¿Listo para Unirte a Nuestro Viaje?",
+      about_cta_p:"<b>Resuélvelo ahora.</b> Habla con nuestro equipo sobre los desafíos contables de tu empresa. Obtén claridad sobre cumplimiento, flujo de caja y declaraciones de impuestos para que puedas mantenerte enfocado en el crecimiento.",
+      services_h1:"Simplifica Tu Contabilidad. Impulsa Tu Crecimiento.",
+      services_lead:"En <b>KwikLedgers</b>, creemos que <b>la contabilidad debe ser simple, accesible y confiable</b> —para que puedas concentrarte en hacer crecer tu negocio. Con más de <b>15 años en el mercado</b> y experiencia con <b>más de 1,500 empresas</b>, combinamos <b>tecnología inteligente con revisión experta</b> para garantizar <b>calidad y tranquilidad en cada entrega.</b>",
+      services_core_title:"Nuestros Servicios Principales",
+      services_core_sub:"Ya sea que estés comenzando tu negocio o escalando, KwikLedgers ofrece una solución financiera completa",
+      services_core1_title:"Cumplimiento y Presentaciones",
+      services_core1_desc:"Manejamos tu contabilidad y presentaciones de impuestos con precisión y consistencia. Desde registros financieros hasta el cumplimiento federal y estatal, mantenemos todo actualizado, reducimos riesgos y garantizamos que estés listo para auditorías.",
+      services_core2_title:"Consultoría y Asesoría Financiera",
+      services_core2_desc:"Te ayudamos a tomar decisiones financieras más inteligentes con estrategias personalizadas para el crecimiento, el cumplimiento y la eficiencia. Desde la planificación hasta la ejecución, aseguramos que tu negocio se mantenga encaminado y rentable.",
+      services_core3_title:"Perspectivas y Crecimiento",
+      services_core3_desc:"Convierte números en decisiones estratégicas. Con informes financieros en tiempo real, planificación fiscal y contabilidad externalizada, te ayudamos a ahorrar dinero, aumentar la eficiencia y hacer crecer tu negocio de manera sostenible.",
+      services_dl_title:"Fechas Límite Clave del IRS Que Debes Conocer",
+      services_dl_sub:"Gestionar tus plazos es fundamental para evitar sanciones y garantizar el cumplimiento. Estas son las fechas clave que toda empresa debe seguir:",
+      services_dl1_date:"Enero",
+      services_dl1_title:"Fecha límite de presentación",
+      services_dl1_desc:"Fecha límite para presentar documentos del año anterior y emitir el Formulario 1099 a contratistas.",
+      services_dl2_date:"15 de marzo",
+      services_dl2_title:"Fecha Límite de Presentación para LLC y S-Corp",
+      services_dl2_desc:"Presentación del Impuesto sobre la Renta Corporativa para LLCs (Formulario 1065) y S-Corps. También es el último día para solicitar una extensión para estas entidades.",
+      services_dl3_date:"15 de abril",
+      services_dl3_title:"Fecha Límite de Presentación para C-Corp y Personas Físicas",
+      services_dl3_desc:"Fecha límite de presentación para C-Corps y declaraciones de impuestos personales. También es la fecha límite para presentar extensiones.",
+      services_dl4_date:"1 de mayo",
+      services_dl4_title:"Vencimiento del Informe Anual de Florida",
+      services_dl4_desc:"Todas las entidades comerciales de Florida —incluidas LLCs y corporaciones— deben presentar su Informe Anual ante el estado antes de esta fecha límite para mantener su estatus activo y evitar sanciones.",
+      services_dl5_date:"15 de octubre",
+      services_dl5_title:"Fecha Límite Final de Extensión de Impuestos",
+      services_dl5_desc:"El 15 de octubre es el último día para presentar declaraciones de impuestos federales extendidas para C-Corporations e individuos. Después de esta fecha, pueden aplicarse sanciones por presentación tardía.",
+      services_dl_note:"*Nota: Los plazos estatales pueden variar. Te ayudamos a estar al día en todas las jurisdicciones.",
+      services_why_title:"¿Por Qué Elegir KwikLedgers?",
+      services_why_intro:"KwikLedgers combina automatización inteligente con experiencia humana para darte control total y visibilidad sobre las finanzas de tu negocio. Esto es lo que nos distingue:",
+      services_wc1_title:"Contabilidad Inteligente y Verificada",
+      services_wc1_desc:"Soluciones impulsadas por IA revisadas por contadores certificados",
+      services_wc2_title:"Acceso Seguro, en Todo Momento",
+      services_wc2_desc:"Acceso 100% seguro basado en la nube, en cualquier momento y lugar",
+      services_wc3_title:"Servicio Completo y Transparente",
+      services_wc3_desc:"Contabilidad digital de servicio completo sin tarifas ocultas",
+      services_wc4_title:"Planes Que Se Ajustan a Tu Presupuesto",
+      services_wc4_desc:"Planes flexibles, desde solo $1/mes",
+      services_wc5_title:"Soporte en Múltiples Estados e Industrias",
+      services_wc5_desc:"Cumplimiento y escalabilidad para múltiples jurisdicciones y sectores.",
+      services_wc6_title:"Soporte Experto Dedicado",
+      services_wc6_desc:"Acceso directo a contadores y asesores certificados para guiar tu trayectoria empresarial en EE. UU.",
+      pricing_h1:"Planes y Precios",
+      pricing_sub:"Elige el plan que se ajuste a las necesidades de tu negocio — desde freelancers hasta operaciones de alto volumen.",
+      pricing_period:"/mes",
+      pricing_choose:"Elegir Plan",
+      pricing_badge:"Más Popular",
+      pricing_p1_name:"First Ledgers",
+      pricing_p1_sub:"(Contabilidad) — Startup/Nuevo Negocio",
+      pricing_p1_li1:"Contabilidad (hasta 2 cuentas bancarias)",
+      pricing_p1_li2:"&lt;= 80 transacciones / mes",
+      pricing_p1_li3:"Análisis con IA e informes financieros mensuales",
+      pricing_p1_li4:"Hasta 1 revisión contable",
+      pricing_p1_li5:"1099s: pago por uso",
+      pricing_p1_li6:"Soporte: teléfono/chat",
+      pricing_p1_li7:"Declaración de impuestos empresarial: complemento",
+      pricing_p1_best:"<b>Ideal para:</b> LLCs nuevas / freelancers con actividad ligera.",
+      pricing_p2_name:"Growing Ledgers",
+      pricing_p2_sub:"Negocio en Etapa de Crecimiento",
+      pricing_p2_li1:"Hasta 4 cuentas bancarias/tarjetas de crédito",
+      pricing_p2_li2:"3000 transacciones/año",
+      pricing_p2_li3:"Hasta 2 revisiones fiscales",
+      pricing_p2_li4:"Declaración de impuestos empresarial",
+      pricing_p2_li5:"Análisis con IA + panel de KPI",
+      pricing_p2_li6:"10 formularios 1099/año",
+      pricing_p2_li7:"10% de descuento en servicios",
+      pricing_p2_li8:"Soporte: teléfono/chat",
+      pricing_p2_best:"<b>Ideal para:</b> PyMEs con pagos regulares a proveedores y volumen creciente.",
+      pricing_p3_name:"Running Ledgers",
+      pricing_p3_sub:"Negocio Avanzado",
+      pricing_p3_li1:"Hasta 6 cuentas bancarias/tarjetas de crédito",
+      pricing_p3_li2:"&lt;= 450 transacciones / mes",
+      pricing_p3_li3:"Hasta 3 revisiones contables",
+      pricing_p3_li4:"Declaración de impuestos empresarial",
+      pricing_p3_li5:"Análisis con IA + KPI + Variación",
+      pricing_p3_li6:"25 formularios 1099/año",
+      pricing_p3_li7:"20% de descuento en servicios",
+      pricing_p3_li8:"Cartas de contador incluidas",
+      pricing_p3_li9:"Soporte: teléfono/chat",
+      pricing_p3_best:"<b>Ideal para:</b> mayor demanda operativa, operaciones con múltiples tarjetas y bancos.",
+      pricing_p4_name:"Power Ledgers",
+      pricing_p4_sub:"Negocio de Poder Ilimitado",
+      pricing_p4_li1:"Hasta 10 cuentas bancarias/tarjetas de crédito",
+      pricing_p4_li2:"&lt;= 1,500 transacciones / mes",
+      pricing_p4_li3:"Hasta 4 revisiones contables",
+      pricing_p4_li4:"Declaración de impuestos empresarial",
+      pricing_p4_li5:"Análisis con IA + Métricas Personalizadas",
+      pricing_p4_li6:"50 formularios 1099/año",
+      pricing_p4_li7:"20% de descuento en servicios",
+      pricing_p4_li8:"Cartas de contador (prioritarias)",
+      pricing_p4_li9:"Planificación estratégica trimestral",
+      pricing_p4_li10:"Soporte: teléfono/chat + Consultoría",
+      pricing_p4_best:"<b>Ideal para:</b> negocios de alto volumen o con gran carga de gestión que necesitan orientación proactiva."
+    }
+  };
+
+  (function(){
+    var sequence = [
+      {flag:'🇺🇸', lang:'en', label:'English'},
+      {flag:'🇧🇷', lang:'pt', label:'Português'},
+      {flag:'🇪🇸', lang:'es', label:'Español'}
+    ];
+    var idx = 0; // estado GLOBAL de idioma — compartilhado por Home/About/Services/Pricing
+
+    function applyLang(lang){
+      var dict = i18n[lang];
+      document.querySelectorAll('[data-i18n]').forEach(function(el){
+        var key = el.getAttribute('data-i18n');
+        if (dict[key] !== undefined) el.innerHTML = dict[key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+        var key = el.getAttribute('data-i18n-placeholder');
+        if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
+      });
+      document.documentElement.setAttribute('lang', lang);
+    }
+
+    function updateAllToggles(current){
+      // Atualiza as 4 bandeiras (Home/About/Services/Pricing) para o mesmo idioma
+      ['home','about','services','pricing'].forEach(function(pageKey){
+        var b = document.getElementById('langToggle-' + pageKey);
+        if(b){
+          b.textContent = current.flag;
+          b.setAttribute('aria-label', 'Change language (' + current.label + ')');
+          b.setAttribute('title', current.label);
+        }
+      });
+    }
+
+    function cycleLang(){
+      idx = (idx + 1) % sequence.length;
+      var current = sequence[idx];
+      updateAllToggles(current);
+      applyLang(current.lang);
+    }
+
+    ['home','about','services','pricing'].forEach(function(pageKey){
+      var b = document.getElementById('langToggle-' + pageKey);
+      if(b){
+        b.addEventListener('click', cycleLang);
+      }
+    });
+  })();
+
+</script>
+
+<script>
+  // ===== Navegação SPA entre Home / About / Services / Pricing =====
+  (function(){
+    function switchView(viewName){
+      document.querySelectorAll('.page-view').forEach(function(el){
+        el.classList.remove('active-view');
+      });
+      var target = document.getElementById('view-' + viewName);
+      if(target) target.classList.add('active-view');
+
+      document.querySelectorAll('.nav-link').forEach(function(link){
+        if(link.getAttribute('data-view') === viewName){
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+      window.scrollTo({top:0, behavior:'instant'});
+      history.replaceState(null, '', '#' + viewName);
+    }
+
+    document.querySelectorAll('[data-view]').forEach(function(link){
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        switchView(this.getAttribute('data-view'));
+        // Fecha o menu mobile (se estiver aberto) ao navegar
+        document.querySelectorAll('.mobile-dropdown.open').forEach(function(d){
+          d.classList.remove('open');
+        });
+      });
+    });
+
+    // ===== Menu hambúrguer (mobile) =====
+    ['home','about','services','pricing'].forEach(function(pageKey){
+      var btn = document.getElementById('mobileMenuBtn-' + pageKey);
+      var dropdown = document.getElementById('mobileDropdown-' + pageKey);
+      if(btn && dropdown){
+        btn.addEventListener('click', function(){
+          dropdown.classList.toggle('open');
+        });
+      }
+    });
+
+    // Permite abrir direto numa aba específica via #home #about #services #pricing
+    var initial = window.location.hash.replace('#','');
+    if(['home','about','services','pricing'].includes(initial)){
+      switchView(initial);
+    }
+  })();
+</script>
+
+</body>
+</html>
